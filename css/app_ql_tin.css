@@ -1,0 +1,288 @@
+.button-back .btn.focus,
+.button-back .btn:focus {
+    box-shadow: none
+}
+
+.btn-group-sm>.btn,
+.button-back .btn-sm {
+    padding: .25rem .5rem .25rem 0
+}
+
+:root {
+    --app-background-color: #fff;
+    --app-background-sub-color: #f3f3f3;
+    --app-background-summary-color: #e5e5e5;
+    --app-border-color: silver;
+    --app-text-main-color: #1e2329;
+    --app-text-sub-color: #707a8a;
+    --app-success-color: #5eba89
+}
+
+[theme=dark] {
+    --app-background-color: #191e24;
+    --app-background-sub-color: #373f50;
+    --app-background-summary-color: #2a303c;
+    --app-border-color: #474d57;
+    --app-text-main-color: #eaecef;
+    --app-text-sub-color: #848e9c;
+    --app-success-color: #5eba89
+}
+
+body,
+html {
+    height: 100%
+}
+
+.container {
+    max-width: 1040px
+}
+
+.app-background {
+    background-color: var(--app-background-color)
+}
+
+.dynamic-title {
+    color: var(--dynamic-title-color)
+}
+
+.dynamic-subtitle {
+    color: var(--dynamic-subtitle-color);
+    padding-top: 10px
+}
+
+input.theme-switch {
+    display: none
+}
+
+input.theme-switch+label,
+input.theme-switch+label:active,
+input.theme-switch:checked+label,
+input.theme-switch:not(:checked)+label:hover {
+    cursor: pointer
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid var(--app-background-color)
+}
+
+.btn-outline-success {
+    border-color: var(--app-success-color)
+}
+
+.btn-outline-success,
+.text-success {
+    color: var(--app-success-color)
+}
+
+.bg-overlay,
+.card {
+    background-color: var(--app-background-sub-color)
+}
+
+#app,
+.table {
+    color: var(--app-text-main-color)
+}
+
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl {
+    padding: 10px 0 50px
+}
+
+.custom-select,
+.form-control,
+.form-control:disabled,
+.form-control:focus,
+.form-control[readonly],
+.input-group-text {
+    background-color: var(--app-background-color);
+    border: 1px solid var(--app-border-color);
+    color: var(--app-text-main-color)
+}
+
+.list-group {
+    font-size: .9rem
+}
+
+.list-group-item {
+    border: none
+}
+
+.dropdown-item,
+.dropdown-menu,
+.list-group-item {
+    background-color: var(--app-background-sub-color)
+}
+
+.dropdown-item,
+.dropdown-menu {
+    color: var(--app-text-main-color)
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    background-color: var(--app-background-color);
+    color: var(--app-text-main-color)
+}
+
+.bet-item .description,
+.list-group-item-action,
+.text-main,
+a,
+a:hover {
+    color: var(--app-text-main-color)
+}
+
+a:hover {
+    text-decoration: none
+}
+
+.bet-item small,
+.text-sub {
+    color: var(--app-text-sub-color)
+}
+
+.modal-content {
+    background-color: var(--app-background-sub-color);
+    color: var(--app-text-main-color)
+}
+
+.footer .nav-pills .nav-link .item {
+    background-color: var(--app-background-color);
+    color: var(--app-text-main-color)
+}
+
+.button-back button {
+    color: var(--app-text-main-color);
+    font-size: 16px
+}
+
+.guide .nav-tabs {
+    border-bottom: none
+}
+
+.report-detail .content-summary,
+.report-mobile-level-one .summary,
+.table.b-table>tbody>tr>.table-b-table-default.b-table-sticky-column,
+.table.b-table>thead>tr>.table-b-table-default.b-table-sticky-column {
+    background-color: var(--app-background-summary-color)
+}
+
+.customer-detail .content,
+.guide .tab-content,
+.report-detail .content {
+    background-color: var(--app-background-sub-color);
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem
+}
+
+.guide .nav-tabs .nav-item.show .nav-link,
+.guide .nav-tabs .nav-link.active {
+    color: var(--app-text-main-color);
+    background-color: var(--app-background-color);
+    border-color: var(--app-background-color) var(--app-background-color) var(--app-text-main-color)
+}
+
+.card-border-top {
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem
+}
+
+.modal-header .close {
+    color: var(--app-text-main-color)
+}
+
+.report-table tfoot,
+.report-table thead {
+    background-color: var(--app-background-sub-color)
+}
+
+.report-table tfoot th div,
+.report-table thead th div {
+    font-weight: 400 !important
+}
+
+.customer-list thead,
+.report-table tfoot,
+.report-table thead,
+.sub-users thead {
+    color: var(--app-text-sub-color);
+    font-size: .9rem
+}
+
+.customer-list thead th {
+    font-weight: 400
+}
+
+#sms-editor {
+    border: 1px solid var(--app-border-color)
+}
+
+#sms-editor:focus-visible {
+    outline: none
+}
+
+.table.b-table>tbody>tr>.table-b-table-default.b-table-sticky-column,
+.table.b-table>tfoot>tr>.table-b-table-default.b-table-sticky-column,
+.table.b-table>thead>tr>.table-b-table-default.b-table-sticky-column {
+    color: var(--app-text-sub-color)
+}
+
+.modal-body {
+    padding: 1rem 0
+}
+
+.vs__dropdown-toggle {
+    padding: 0 !important;
+    background: var(--app-background-color) !important;
+    border: 1px solid var(--app-border-color) !important
+}
+
+.vs__selected {
+    color: var(--app-text-main-color) !important
+}
+
+.vs__dropdown-menu {
+    background: var(--app-background-color) !important
+}
+
+.daterangepicker,
+.daterangepicker .calendar-table,
+.daterangepicker td.off,
+.daterangepicker td.off.end-date,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.reportrange-text[data-v-1ebd09d2],
+td[data-v-98ac2448],
+th[data-v-98ac2448] {
+    background: var(--app-background-color) !important;
+    color: var(--app-text-main-color) !important
+}
+
+.daterangepicker,
+.reportrange-text[data-v-1ebd09d2] {
+    border: 1px solid var(--app-border-color) !important
+}
+
+.daterangepicker .calendar-table td.today {
+    background: var(--app-background-summary-color) !important
+}
+
+.daterangepicker .calendar-table .next span,
+.daterangepicker .calendar-table .prev span {
+    border: solid var(--app-text-main-color) !important;
+    border-width: 0 2px 2px 0 !important
+}
+
+.daterangepicker td.active,
+.daterangepicker td.active:hover,
+.daterangepicker td.in-range {
+    background-color: var(--app-background-summary-color) !important
+}
