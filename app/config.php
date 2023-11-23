@@ -2,9 +2,10 @@
     class db_info{
         public const MAY_CHU = "localhost";
         //public const MAY_CHU = '213.136.93.171'; //contabo
-        public const TAI_KHOAN = "ki11996499_admin";
-        public const MAT_KHAU = "matkhauratmanh";
-        public const TEN_CSDL = "ki11996499_maytinh5";
+        public const TAI_KHOAN = "root";
+        public const MAT_KHAU = "my-secret-pw";
+        public const TEN_CSDL = "db_so";
+        public const PORT_CSDL = "2222";
         //ki11996499_
     }
     class TrangThaiTaiKhoan{

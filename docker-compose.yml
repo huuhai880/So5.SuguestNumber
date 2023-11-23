@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  app:
+    build: ./docker
+    image: thecodeholic/php_mvc
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount source-code for development
+      - ./:/var/www
+
+volumes:
+  mysql-data:
