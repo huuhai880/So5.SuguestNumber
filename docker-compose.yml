@@ -1,18 +1,22 @@
 version: "3.8"
+
 services:
-  nginx:
-    container_name: nginx
-    build: ./docker/nginx
-    command: nginx -g "daemon off;"
-    links:
-      - php
-    ports:
-      - "4332:80"
-    volumes:
-      - ./:/var/www/html
+
   php:
     container_name: php
-    build: ./docker/php
+    build: .
     volumes:
-      - ./:/var/www/html
+      - ./src:/var/www/html
     working_dir: /var/www/html
+    ports:
+      - 9000:80
+    
+  mysql_db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: '50612596'
+      MYSQL_DATABASE: db_so
+      MYSQL_USER: admin_sql
+      MYSQL_PASSWORD: root@123
+    ports:
+      - "3306:3306"

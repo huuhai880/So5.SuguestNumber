@@ -6,7 +6,7 @@ class sql_connector
     public $conn;
     function __construct()
     {
-        $this->conn = mysqli_connect(db_info::MAY_CHU, db_info::TAI_KHOAN, db_info::MAT_KHAU, db_info::TEN_CSDL, db_info::PORT_CSDL);
+        $this->conn = mysqli_connect(db_info::MAY_CHU, db_info::TAI_KHOAN, db_info::MAT_KHAU, db_info::TEN_CSDL);
         if(!$this->conn->connect_errno)
             $this->conn->set_charset('utf8');
     }
