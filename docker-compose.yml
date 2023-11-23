@@ -1,14 +1,18 @@
-version: "3.7"
-
+version: "3.8"
 services:
-  app:
-    build: ./docker
-    image: thecodeholic/php_mvc
+  nginx:
+    container_name: nginx
+    build: ./docker/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php
     ports:
-      - "8080:80"
+      - "4332:80"
     volumes:
-      # Mount source-code for development
-      - ./:/var/www
-
-volumes:
-  mysql-data:
+      - ./:/var/www/html
+  php:
+    container_name: php
+    build: ./docker/php
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
