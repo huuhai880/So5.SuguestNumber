@@ -13,6 +13,7 @@ services:
     
   mysql_db:
     image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: '50612596'
       MYSQL_DATABASE: db_so

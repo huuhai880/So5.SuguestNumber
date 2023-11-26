@@ -1,9 +1,9 @@
 <?php 
     class db_info{
-        public const MAY_CHU = "127.0.0.1";
+        public const MAY_CHU = "localhost";
         //public const MAY_CHU = '213.136.93.171'; //contabo
-        public const TAI_KHOAN = "admin_sql";
-        public const MAT_KHAU = "root@123";
+        public const TAI_KHOAN = "root";
+        public const MAT_KHAU = "50612596";
         public const TEN_CSDL = "db_so";
         public const PORT_CSDL = "3306";
         //ki11996499_

@@ -1,12 +1,14 @@
 <?php
+
 $dir_name = dirname(__FILE__);
-require_once($dir_name . '/config.php');
+require_once(dirname($dir_name) . '/app/config.php');
+
 class sql_connector
 {
     public $conn;
     function __construct()
     {
-        $this->conn = mysqli_connect(db_info::MAY_CHU, db_info::TAI_KHOAN, db_info::MAT_KHAU, db_info::TEN_CSDL);
+        $this->conn = mysqli_connect("172.28.0.2", "root", "50612596", "db_so");
         if(!$this->conn->connect_errno)
             $this->conn->set_charset('utf8');
     }

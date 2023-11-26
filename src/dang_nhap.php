@@ -2,7 +2,10 @@
       session_start();
       $_SESSION['logged_in'] = false;
       $dir_name = dirname(__FILE__);
-      include_once( $dir_name . '/tai_khoan/login.php');
+      require_once(dirname($dir_name) . '/html/tai_khoan/login.php');
+
+      
+     
 ?>
 <!DOCTYPE html>
 <html lang="en">
