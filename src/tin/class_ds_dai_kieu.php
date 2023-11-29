@@ -17,27 +17,27 @@ class DanhSachDai
     {
         $this->dais = array();
         $this->dais[] = new Ten('Miền Bắc', 'mb', array('hn', 'mb', 'hanoi'));
-        $this->dais[] = new Ten('TP. HCM', 'tp', array('tp', 'hcm'));
-        $this->dais[] = new Ten('Đồng Tháp', 'dt', array('dt'));
-        $this->dais[] = new Ten('Cà Mau', 'cm', array('cm', 'camau'));
-        $this->dais[] = new Ten('Bến Tre', 'bt', array('bt', 'btr', 'btre'));
-        $this->dais[] = new Ten('Vũng Tàu', 'vt', array('vt'));
-        $this->dais[] = new Ten('Bạc Liêu', 'blieu', array('blieu', 'baclieu'));
-        $this->dais[] = new Ten('Đồng Nai', 'dn', array('dn'));
-        $this->dais[] = new Ten('Cần Thơ', 'ct', array('ct'));
-        $this->dais[] = new Ten('Sóc Trăng', 'st', array('st', 'soctrang'));
-        $this->dais[] = new Ten('Tây Ninh', 'tn', array('tn'));
-        $this->dais[] = new Ten('An Giang', 'ag', array('ag'));
-        $this->dais[] = new Ten('Bình Thuận', 'bt', array('bt', 'binhthuan'));
-        $this->dais[] = new Ten('Vĩnh Long', 'vl', array('vl'));
-        $this->dais[] = new Ten('Bình Dương', 'sbe', array('sbe', 'bd', 'sb'));
-        $this->dais[] = new Ten('Trà Vinh', 'tv', array('tv', 'travinh'));
-        $this->dais[] = new Ten('Long An', 'la', array('la'));
-        $this->dais[] = new Ten('Hậu Giang', 'hg', array('hg', 'haugiang'));
-        $this->dais[] = new Ten('Tiền Giang', 'tg', array('tg'));
-        $this->dais[] = new Ten('Kiên Giang', 'kg', array('kg'));
-        $this->dais[] = new Ten('Đà Lạt', 'dl', array('dl', 'dalat'));
-        $this->dais[] = new Ten('Bình Phước', 'bp', array('bp', 'binhphuoc'));
+        $this->dais[] = new Ten('TP. HCM', 'tp', array('mn', 'tp', 'hcm'));
+        $this->dais[] = new Ten('Đồng Tháp', 'dt', array('mn','dt'));
+        $this->dais[] = new Ten('Cà Mau', 'cm', array('mn','cm', 'camau'));
+        $this->dais[] = new Ten('Bến Tre', 'bt', array('mn','bt', 'btr', 'btre'));
+        $this->dais[] = new Ten('Vũng Tàu', 'vt', array('mn','vt'));
+        $this->dais[] = new Ten('Bạc Liêu', 'blieu', array('mn','blieu', 'baclieu'));
+        $this->dais[] = new Ten('Đồng Nai', 'dn', array('mn','dn'));
+        $this->dais[] = new Ten('Cần Thơ', 'ct', array('mn','ct'));
+        $this->dais[] = new Ten('Sóc Trăng', 'st', array('mn','st', 'soctrang'));
+        $this->dais[] = new Ten('Tây Ninh', 'tn', array('mn','tn'));
+        $this->dais[] = new Ten('An Giang', 'ag', array('mn','ag'));
+        $this->dais[] = new Ten('Bình Thuận', 'bt', array('mn','bt', 'binhthuan'));
+        $this->dais[] = new Ten('Vĩnh Long', 'vl', array('mn','vl'));
+        $this->dais[] = new Ten('Bình Dương', 'sbe', array('mn','sbe', 'bd', 'sb'));
+        $this->dais[] = new Ten('Trà Vinh', 'tv', array('mn','tv', 'travinh'));
+        $this->dais[] = new Ten('Long An', 'la', array('mn','la'));
+        $this->dais[] = new Ten('Hậu Giang', 'hg', array('mn','hg', 'haugiang'));
+        $this->dais[] = new Ten('Tiền Giang', 'tg', array('mn','tg'));
+        $this->dais[] = new Ten('Kiên Giang', 'kg', array('mn','kg'));
+        $this->dais[] = new Ten('Đà Lạt', 'dl', array('mn','dl', 'dalat'));
+        $this->dais[] = new Ten('Bình Phước', 'bp', array('mn','bp', 'binhphuoc'));
     }
     private function LaCode(string $code, int $day_of_week) : bool
     {
