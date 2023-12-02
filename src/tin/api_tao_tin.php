@@ -24,14 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tin_moi->thoi_gian_danh = date('Y-m-d', strtotime($_POST["thoi_gian_danh"]));
     $tin_moi->tai_khoan_danh = $_POST["tai_khoan_danh"];
     $tin_moi->tai_khoan_tao = $_POST["account_create"];
+    $tin_moi->vung_mien = $_POST["vung_mien"];
     $tin_moi->thoi_gian_tao = date('Y-m-d H:i:s');
     $action = $_POST["action"];
+    $vung_mien = $_POST["vung_mien"];
     //Tin quá dài
     if (strlen($tin_moi->noi_dung) > 4990) {
         echo 'Tin quá dài';
         exit();
     }
-
 
     //Tạo đối tượng noi_dung_tin để thực hiện kiểm tra và bóc tách
     $day_of_week = date('w', strtotime($tin_moi->thoi_gian_danh));
@@ -41,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $ket_qua_kiem_tra = '';
     if (!isset($_POST["smsid"])) {
-        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung();
+
+        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung($_POST["vung_mien"]);
+
     }
 
     if ($ket_qua_kiem_tra){
@@ -51,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($ket_qua_kiem_tra)) { //Nếu ko có lỗi
-        $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();
+        $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu($_POST["vung_mien"]);
 
-        $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
+        $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet, $_POST["vung_mien"]);
 
         $ds_chi_tiet = $result['ds_chi_tiet'];
         $ds_thong_ke = $result['ds_thong_ke'];
@@ -79,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $thong_bao = "Cập nhật tin thành công!";
                 $luu_thanh_cong = true;
 
-                $response = array("data" => $ds_thong_ke, "message" => "success", 'status' => 200 );
+                $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
 
                 echo json_encode($response);
 
@@ -90,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $thong_bao = "Lưu thành công!";
                     $luu_thanh_cong = true;
                     
-                    $response = array("data" => $ds_thong_ke, "message" => "success", 'status' => 200 );
+                    $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
 
                     echo json_encode($response);
 
@@ -106,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }else if ($action === 'kiem_tra'){
 
             if ($ds_thong_ke){
-                $response = array("data" => $ds_thong_ke, "message" => "success", 'status' => 200 );
+                $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
                 echo json_encode($response);
             }
 

@@ -8,7 +8,7 @@ class sql_connector
     public $conn;
     function __construct()
     {
-        $this->conn = mysqli_connect("172.28.0.2", "root", "50612596", "db_so");
+        $this->conn = mysqli_connect("172.28.0.3", "root", "50612596", "db_so");
         if(!$this->conn->connect_errno)
             $this->conn->set_charset('utf8');
     }
