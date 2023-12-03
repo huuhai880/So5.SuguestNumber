@@ -1,0 +1,90 @@
+.list-group {
+    font-size: .9rem;
+}
+.bet-item.list-group-item {
+    padding: 5px;
+    margin-bottom: 1px;
+}
+.list-group-item {
+    border: none;
+}
+.dropdown-item, .dropdown-menu, .list-group-item {
+    background-color: #f3f3f3;
+}
+.list-group {
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem
+}
+
+.bet-item.list-group-item {
+    padding: 5px;
+    margin-bottom: 1px;
+}
+
+.bet-item .sms {
+    word-break: break-all
+}
+
+.bet-item .date {
+    position: absolute;
+    bottom: 8px;
+    left: 50px;
+    font-style: italic;
+    font-size: .7rem
+}
+
+.bet-item .card-profile-stats>div .description,.bet-item .card-profile-stats>div .heading {
+    font-size: .9rem;
+    text-transform: lowercase;
+    display: block
+}
+
+.bet-item .b-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: medium;
+    line-height: 1.4
+}
+
+.bet-item .link {
+    width: 100%
+}
+
+.bet-item .card-profile-stats {
+    padding: 0;
+    min-width: 100px
+}
+
+.card-profile-stats>div {
+    padding: 0;
+    text-align: center;
+    margin-right: 1rem;
+    text-align: end;
+    min-width: 70px
+}
+
+.bet-item .card-profile-stats>div:last-child {
+    margin-right: 0
+}
+
+.bet-item .info .player-name {
+    text-align: start;
+    margin: 0
+}
+
+.bet-item .info small {
+    float: left;
+    margin-left: 0;
+    text-align: left
+}
+
+.bet-item .b-avatar .b-avatar-custom,.bet-item .b-avatar .b-avatar-img,.bet-item .b-avatar .b-avatar-text {
+    align-items: flex-end
+}
+
+.bet-item .delete-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    font-size: 120%
+}

@@ -1,8 +1,8 @@
 <?php
 $dir_name = dirname(__FILE__);
 require_once(dirname($dir_name) . '/app/class_sql_connector.php');
-include_once(dirname($dir_name) . '/tin/class_tin.php');
-include_once(dirname($dir_name) . '/tin/class_noi_dung_tin_v2.php');
+include_once(dirname($dir_name) . '/tin_mb/class_tin.php');
+include_once(dirname($dir_name) . '/tin_mb/class_noi_dung_tin_mb.php');
 
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -10,14 +10,14 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Chuyển thông tin gửi lên từ post dạng object
-    $tin_cu = new tin();
-    $tin_moi = new tin();
+    $tin_cu = new tin_mb();
+    $tin_moi = new tin_mb();
     $thong_bao = '';
     $luu_thanh_cong = false;
 
     if (isset($_POST["smsid"])) {
         $id_tin = $_POST["smsid"];
-        $tin_cu = tin::doc_tin_tu_db_theo_id($id_tin);
+        $tin_cu = tin_mb::doc_tin_tu_db_theo_id($id_tin);
     }
 
     $tin_moi->noi_dung = strip_tags($_POST['noi_dung']);
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Tạo đối tượng noi_dung_tin để thực hiện kiểm tra và bóc tách
     $day_of_week = date('w', strtotime($tin_moi->thoi_gian_danh));
-    $noi_dung_tin = new NoiDungTin($tin_moi->noi_dung, $day_of_week, $tin_moi->tai_khoan_danh);
+    $noi_dung_tin = new NoiDungTin_MB($tin_moi->noi_dung, $day_of_week, $tin_moi->tai_khoan_danh);
 
     $tin_moi->noi_dung = $noi_dung_tin->noi_dung_str; //Cập nhật lại nội dung đã được chuẩn hoá
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($ket_qua_kiem_tra)) { //Nếu ko có lỗi
         $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();
 
-        $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
+        $result = tin_mb::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
 
         $ds_chi_tiet = $result['ds_chi_tiet'];
         $ds_thong_ke = $result['ds_thong_ke'];
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo json_encode($response);
 
             } else { //ghi mới
-                $kq_ghi = tin::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet);
+                $kq_ghi = tin_mb::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet);
                 //Ghi Tin và các chi tiết xuống csdl
                 if ($kq_ghi) {
                     $thong_bao = "Lưu thành công!";
@@ -118,14 +118,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 if (isset($_GET["smsid"])) {
     $id_tin = $_GET["smsid"];
-    $tin_moi = tin::doc_tin_tu_db_theo_id($id_tin);
+    $tin_moi = tin_mb::doc_tin_tu_db_theo_id($id_tin);
 
     $day_of_week = date('w', strtotime($tin_moi->thoi_gian_danh));
-    $noi_dung_tin = new NoiDungTin($tin_moi->noi_dung, $day_of_week, $tin_moi->tai_khoan_danh);
+    $noi_dung_tin = new NoiDungTin_MB($tin_moi->noi_dung, $day_of_week, $tin_moi->tai_khoan_danh);
 
     $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();
 
-    $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
+    $result = tin_mb::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
 
     $ds_chi_tiet = $result['ds_chi_tiet'];
     $ds_thong_ke = $result['ds_thong_ke'];
@@ -192,7 +192,7 @@ function xuat_html_thong_ke(array $ds_thong_ke): string
 function xuat_html_chitiettin(array $ds_chi_tiet): string
 {
     $result = '';
-    $tong = new tin_thongke(""); //Biến tổng để lưu tổng các thống kê, giúp xuất tổng
+    $tong = new tin_thongke_mb(""); //Biến tổng để lưu tổng các thống kê, giúp xuất tổng
     foreach ($ds_chi_tiet as $item) {
         //$thong_ke = new tin_thongke('');
         //$thong_ke->sao_chep($item);

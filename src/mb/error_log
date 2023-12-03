@@ -1,0 +1,10 @@
+[16-Dec-2022 11:06:21 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to a member function set_charset() on bool in /home/nqqwvazw/public_html/dbConnect.php:10
+Stack trace:
+#0 /home/nqqwvazw/public_html/login.php(10): require_once()
+#1 {main}
+  thrown in /home/nqqwvazw/public_html/dbConnect.php on line 10
+[16-Dec-2022 11:06:25 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to a member function set_charset() on bool in /home/nqqwvazw/public_html/dbConnect.php:10
+Stack trace:
+#0 /home/nqqwvazw/public_html/login.php(10): require_once()
+#1 {main}
+  thrown in /home/nqqwvazw/public_html/dbConnect.php on line 10
