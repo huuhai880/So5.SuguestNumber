@@ -69,41 +69,83 @@ if ($_POST["action"] === "doc") {
             $thong_ke->ten_hien_thi = $row['ten_hien_thi']; //Cập nhật
 
             //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
-            if($ngay === "Tất cả"){
-                $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tk'";
-            }
-            else{
-                $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tk'
+            $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tk'
                                 AND thoi_gian_danh = '$ngay'";
-            }            
+
             $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
             $thong_ke = CapNhatThongKeTheoDanhSachTin($tin_list, $thong_ke); //Hàm cập nhật thống kê theo danh sách tin
-            $thong_ke->TaoNoiDungSo($ngay);
-            $thong_ke_list[] = $thong_ke;
+
+            // echo var_dump($thong_ke);
+
+            // $thong_ke->TaoNoiDungSo($ngay);
+            // $thong_ke_list[] = $thong_ke;
         }   
         
     }
 
-    $response ["thong_ke_list"] = json_encode($thong_ke_list);
+    $response ["thong_ke"] = json_encode($thong_ke);
     echo json_encode($response);
 
      
 }
 
-function CapNhatThongKeTheoDanhSachTin(array $tin_list, thong_ke $thong_ke):thong_ke
+// function CapNhatThongKeTheoDanhSachTin(array $tin_list, thong_ke $thong_ke):thong_ke
+// {
+//     foreach ($tin_list as $tin) { //Mới mỗi tin
+//         $thong_ke->so_tin ++; //Tăng biến đếm số tin
+//         $thong_ke->hai_c         += $tin->hai_c;
+//         $thong_ke->ba_c     += $tin->ba_c;
+//         $thong_ke->bon_c     += $tin->bon_c;
+//         $thong_ke->da_daxien    += $tin->da_daxien;
+//         $thong_ke->xac          += $tin->xac;
+//         $thong_ke->thuc_thu     += $tin->thuc_thu;
+//         $thong_ke->tien_trung   += ($tin->tien_trung != -1)? $tin->tien_trung : 0 ; 
+//     }
+//     $thong_ke->thang_thua = $thong_ke->tien_trung - $thong_ke->thuc_thu;
+//     return $thong_ke;
+// }
+
+
+function CapNhatThongKeTheoDanhSachTin(array $tin_list, thong_ke $thong_ke): array
 {
-    foreach ($tin_list as $tin) { //Mới mỗi tin
-        $thong_ke->so_tin ++; //Tăng biến đếm số tin
-        $thong_ke->hai_c         += $tin->hai_c;
-        $thong_ke->ba_c     += $tin->ba_c;
-        $thong_ke->bon_c     += $tin->bon_c;
-        $thong_ke->da_daxien    += $tin->da_daxien;
-        $thong_ke->xac          += $tin->xac;
-        $thong_ke->thuc_thu     += $tin->thuc_thu;
-        $thong_ke->tien_trung   += ($tin->tien_trung != -1)? $tin->tien_trung : 0 ; 
+    // Initialize an associative array to store grouped elements
+    $grouped_tin_list = array();
+
+    foreach ($tin_list as $tin) {
+        $thong_ke->so_tin++;
+        $thong_ke->hai_c += $tin->hai_c;
+        $thong_ke->ba_c += $tin->ba_c;
+        $thong_ke->bon_c += $tin->bon_c;
+        $thong_ke->da_daxien += $tin->da_daxien;
+        $thong_ke->xac += $tin->xac;
+        $thong_ke->thuc_thu += $tin->thuc_thu;
+        $thong_ke->tien_trung += ($tin->tien_trung != -1) ? $tin->tien_trung : 0;
+
+        // Group by 'vung_mien'
+        $vung_mien = $tin->vung_mien;
+        if (!isset($grouped_tin_list[$vung_mien])) {
+            $grouped_tin_list[$vung_mien] = new thong_ke(); // Initialize a new thong_ke object for each group
+        }
+
+        // Update statistics for each group
+        $grouped_tin_list[$vung_mien]->so_tin++;
+        $grouped_tin_list[$vung_mien]->hai_c += $tin->hai_c;
+        $grouped_tin_list[$vung_mien]->ba_c += $tin->ba_c;
+        $grouped_tin_list[$vung_mien]->bon_c += $tin->bon_c;
+        $grouped_tin_list[$vung_mien]->da_daxien += $tin->da_daxien;
+        $grouped_tin_list[$vung_mien]->xac += $tin->xac;
+        $grouped_tin_list[$vung_mien]->thuc_thu += $tin->thuc_thu;
+        $grouped_tin_list[$vung_mien]->tien_trung += ($tin->tien_trung != -1) ? $tin->tien_trung : 0;
     }
-    $thong_ke->thang_thua = $thong_ke->tien_trung - $thong_ke->thuc_thu;
-    return $thong_ke;
+
+    // Calculate 'thang_thua' for each group
+    foreach ($grouped_tin_list as $vung_mien => $grouped_thong_ke) {
+        $grouped_tin_list[$vung_mien]->thang_thua = $grouped_thong_ke->tien_trung - $grouped_thong_ke->thuc_thu;
+    }
+
+    // Now, $grouped_tin_list is an associative array where keys are 'vung_mien' values
+    // and values are thong_ke objects containing statistics for each group.
+    return $grouped_tin_list;
 }
 
 ?>

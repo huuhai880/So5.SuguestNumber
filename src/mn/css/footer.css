@@ -1,0 +1,166 @@
+.footer {
+    position: fixed;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    box-shadow: 0 -5px 10px 0 rgb(0 0 0/6%);
+    min-height: calc(50px + env(safe-area-inset-bottom)*1.1);
+    transition: all .35s ease;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, .5)
+}
+
+.footer .add-bet img.icon {
+    content: url(/img/icon-taisan-inactive-light.svg)
+}
+
+.footer .router-link-active img.icon {
+    content: url(/img/icon-taisan-active-light.svg)
+}
+
+.footer .add-bet {
+    width: 100%;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -12%);
+    position: relative
+}
+
+.footer .add-bet .col-center-main {
+    width: 70px;
+    left: 50%;
+    z-index: 1
+}
+
+.footer .add-bet .col-center-sub {
+    width: calc(50% - 30px);
+    position: absolute;
+    height: 50px;
+    z-index: 2
+}
+
+.footer .add-bet .col-center-sub.left {
+    left: -2px;
+    top: 3px
+}
+
+.footer .add-bet .col-center-sub.right {
+    right: -2px;
+    top: 3px
+}
+
+.footer .add-bet .icon {
+    height: 60px;
+    width: 54px;
+    top: 50%;
+    left: 38%;
+    transform: translate(-50%, -30%);
+    position: relative
+}
+
+.footer .add-bet .bg-icon {
+    top: -32px !important;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: relative
+}
+
+.footer .nav-pills .nav-link {
+    border-radius: 0
+}
+
+.footer .nav-link {
+    padding: 0;
+    height: 50px
+}
+
+.footer .dropdown-toggle:after {
+    display: none
+}
+
+.footer .title {
+    font-size: .7rem;
+    font-weight: 500;
+    opacity: .7
+}
+
+.footer .nav-item {
+    flex: 1
+}
+
+.footer .nav-item-icon-text {
+    line-height: 1.8
+}
+
+.footer .b-dropdown-text {
+    display: block
+}
+
+.footer .expired {
+    line-height: 0;
+    width: 240px;
+    margin-top: -15px
+}
+
+.menu-item {
+    color: #1f1f1f;
+    font-size: 1.3rem
+}
+
+.active .menu-item {
+    color: #da4453 !important
+}
+
+.nav-pills .nav-link.active {
+    background: none
+}
+
+.nav-item {
+    align-self: center
+}
+
+.nav-pills .show>.nav-link {
+    background: none
+}
+
+#user-info-modal .modal-header {
+    background-color: #da4453 !important;
+    color: #fff;
+    border-bottom: none
+}
+
+.footer-menu {
+    padding-bottom: env(safe-area-inset-bottom, 0)
+}
+
+.col-center-sub.patch {
+    width: 100% !important;
+    bottom: calc(env(safe-area-inset-bottom, 0) - 13px) !important
+}
+
+div#main-app {
+    display: flex;
+    flex-direction: column
+}
+
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-bottom: 60px
+}
+
+#nav {
+    padding: 30px
+}
+
+#nav a {
+    font-weight: 700
+}
+
+#nav a.router-link-exact-active {
+    color: #42b983
+}
+
+#user-info-modal footer {
+    display: none
+}

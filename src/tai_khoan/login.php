@@ -32,7 +32,7 @@
 		if($is_web && $response["success"]==1 ){
 			// session_start();
 			$_SESSION['logged_in'] = true;
-			$_SESSION['username'] = $username;	
+			$_SESSION['username'] = $username;
 			$_SESSION['loai_tai_khoan'] = $response["loai_tai_khoan"];
 			
 			$GLOBALS['session_timeout'] = 60;

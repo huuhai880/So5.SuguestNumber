@@ -209,7 +209,7 @@ class tin
         //Lấy kết quả theo ngày đánh
         $day_of_week = date('w', strtotime($tin->thoi_gian_danh));
         if ($da_co_ket_qua) {
-            $ket_qua_mien_nam = ket_qua_ngay::LayKetQuaMienNam($day_of_week);
+
             $ket_qua_mien_bac = ket_qua_ngay::LayKetQuaMienBac($day_of_week);
         }
 
@@ -234,11 +234,10 @@ class tin
             $so_arr = explode(' ', $chi_tiet_tin->so);
             $so_luong_so = count($so_arr);
 
-            $vung_mien = ($chi_tiet_tin->dai === 'mb') ? 'Miền Bắc' : 'Miền Nam'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
+            $vung_mien =  'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
             if ($da_co_ket_qua)
-                $ket_qua_dai = ($chi_tiet_tin->dai === 'mb') ?
-                    $ket_qua_mien_bac->ket_qua_cac_dai[0] :
-                    $ket_qua_mien_nam->layKetQuaDai($chi_tiet_tin->dai);
+                $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0];
+
             //--------Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi ---------------
             if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
 
@@ -249,8 +248,10 @@ class tin
                 $trung = $chi_tiet_cau_hinh->trung;
 
                 $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
-                if ($chi_tiet_tin->dai === 'mb' && $chi_tiet_tin->kieu === 'dau')
+
+                if ($chi_tiet_tin->kieu === 'dau')
                     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 4; //Xác
+                
                 $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
                 $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
@@ -278,7 +279,7 @@ class tin
                 $co = $chi_tiet_cau_hinh->co;
                 $trung = $chi_tiet_cau_hinh->trung;
 
-                if ($chi_tiet_tin->kieu === 'xdau' && $chi_tiet_tin->dai === 'mb')
+                if ($chi_tiet_tin->kieu === 'xdau')
                     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 3; //Xác
                 else
                     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
@@ -307,8 +308,7 @@ class tin
                 $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
 
                 $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
-                $so_lo = ($vung_mien === "Miền Bắc") ?
-                    $so_lo_mien_bac[$con] : 20 - $con; //Tính số lô dựa vào con (số ký tự)
+                $so_lo = $so_lo_mien_bac[$con]; //Tính số lô dựa vào con (số ký tự)
 
                 $chi_tiet_tin->xac += $so_lo * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
                 $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_bao_lo($vung_mien, $con); //Lấy chi tiết cấu hình theo số con
@@ -390,9 +390,9 @@ class tin
                 $co = $chi_tiet_cau_hinh->co; //cò
                 $trung = $chi_tiet_cau_hinh->trung;
 
-                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 36 * $so_luong_so; //Xác của tin
-                if ($chi_tiet_tin->dai === 'mb')
-                    $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
+                
+                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
+
                 $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
                 $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
@@ -420,7 +420,7 @@ class tin
                 $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
                 if ($da_co_ket_qua) //Cập nhật kết quả
-                    $chi_tiet_tin = $ket_qua_mien_nam->DaXien($chi_tiet_tin, $trung);
+                    $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung);
 
                 $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
                 $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;
@@ -476,17 +476,15 @@ class tin
         $cau_hinh = cau_hinh::LayCauHinh($tin->tai_khoan_danh); //Lấy cấu hình
         //Lấy kết quả theo ngày đánh
         $day_of_week = date('w', strtotime($tin->thoi_gian_danh));
-        $ket_qua_mien_nam = ket_qua_ngay::LayKetQuaMienNam($day_of_week);
         $ket_qua_mien_bac = ket_qua_ngay::LayKetQuaMienBac($day_of_week);
 
         $tin->tien_trung = 0;
         //Kiểm tra từng chi tiết tin
         foreach ($ds_chi_tiet as $chi_tiet_tin) {
             $so_arr = explode(' ', $chi_tiet_tin->so);
-            $vung_mien = ($chi_tiet_tin->dai === 'mb') ? 'Miền Bắc' : 'Miền Nam'; //Lấy vùng miền và lấy kết quả đài theo vùng miền
+            $vung_mien = 'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài theo vùng miền
 
-            $ket_qua_dai = ($chi_tiet_tin->dai === 'mb') ? $ket_qua_mien_bac->ket_qua_cac_dai[0] :
-                $ket_qua_mien_nam->layKetQuaDai($chi_tiet_tin->dai);
+            $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0] ;
             //Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi
             if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
                 //Lấy trúng tương ứng với kiểu đánh đầu hay đuôi
@@ -537,7 +535,7 @@ class tin
                 $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da_xien(); //Lấy cấu hình, cò, trúng
                 $trung = $chi_tiet_cau_hinh->trung;
                 //Cập nhật kết quả
-                $chi_tiet_tin = $ket_qua_mien_nam->DaXien($chi_tiet_tin, $trung);
+                $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung);
             }
             //Cập nhật tiền trúng
             if ($chi_tiet_tin->tien_trung > 0) {
@@ -557,15 +555,16 @@ class tin
         return $result;
     }
 
-    public static function GhiTinVaChiTiet(tin $tin, array $ds_chi_tiet)
-    {
+    public static function GhiTinVaChiTiet(tin $tin, array $ds_chi_tiet, $vung_mien)
+    {   
+       
         $conn = new sql_connector();
         //$success = false;
         if (!$conn->get_connect_error()) {
             $sql = "INSERT INTO tin (ma_tin, tai_khoan_tao, tai_khoan_danh, thoi_gian_tao, thoi_gian_danh, noi_dung, ghi_chu,
-        hai_c, ba_c, bon_c, da_daxien, xac, thuc_thu, tien_trung, so_trung, trang_thai)
+        hai_c, ba_c, bon_c, da_daxien, xac, thuc_thu, tien_trung, so_trung, trang_thai, vung_mien)
         VALUES ('$tin->ma_tin','$tin->tai_khoan_tao','$tin->tai_khoan_danh', '$tin->thoi_gian_tao', '$tin->thoi_gian_danh', '$tin->noi_dung','$tin->ghi_chu',
-        $tin->hai_c,$tin->ba_c, $tin->bon_c, $tin->da_daxien, $tin->xac, $tin->thuc_thu, $tin->tien_trung, '$tin->so_trung', $tin->trang_thai)";
+        $tin->hai_c,$tin->ba_c, $tin->bon_c, $tin->da_daxien, $tin->xac, $tin->thuc_thu, $tin->tien_trung, '$tin->so_trung', $tin->trang_thai,'$vung_mien' )";
             //echo "sql1: " . $sql . "</br>";
             //echo $sql . "<br/>";
             if ($conn->get_query_result($sql)) {

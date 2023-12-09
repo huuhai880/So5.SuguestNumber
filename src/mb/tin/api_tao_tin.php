@@ -2,7 +2,7 @@
 $dir_name = dirname(__FILE__);
 require_once(dirname($dir_name) . '/app/class_sql_connector.php');
 include_once(dirname($dir_name) . '/tin/class_tin.php');
-include_once(dirname($dir_name) . '/tin/class_noi_dung_tin_v2.php');
+include_once(dirname($dir_name) . '/tin/class_noi_dung_tin.php');
 
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -23,8 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tin_moi->noi_dung = strip_tags($_POST['noi_dung']);
     $tin_moi->thoi_gian_danh = date('Y-m-d', strtotime($_POST["thoi_gian_danh"]));
     $tin_moi->tai_khoan_danh = $_POST["tai_khoan_danh"];
-    $tin_moi->tai_khoan_tao = $_POST["account_create"];
-    $tin_moi->vung_mien = $_POST["vung_mien"];
+    $tin_moi->tai_khoan_tao = $_POST['account_create'];
     $tin_moi->thoi_gian_tao = date('Y-m-d H:i:s');
     $action = $_POST["action"];
     $vung_mien = $_POST["vung_mien"];
@@ -42,9 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $ket_qua_kiem_tra = '';
     if (!isset($_POST["smsid"])) {
-
         $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung();
-
     }
 
     if ($ket_qua_kiem_tra){
@@ -55,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($ket_qua_kiem_tra)) { //Nếu ko có lỗi
         $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();
-
+       
         $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
 
         $ds_chi_tiet = $result['ds_chi_tiet'];
@@ -87,12 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo json_encode($response);
 
             } else { //ghi mới
-                $kq_ghi = tin::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet);
+                $kq_ghi = tin::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet, $vung_mien);
                 //Ghi Tin và các chi tiết xuống csdl
                 if ($kq_ghi) {
                     $thong_bao = "Lưu thành công!";
                     $luu_thanh_cong = true;
-                    
+
                     $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
 
                     echo json_encode($response);
@@ -101,18 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $thong_bao = "Lỗi! không lưu thành công";
                     $response = array("message" => "Lỗi! không lưu thành công", 'status' => 400 );
                     echo json_encode($response);
-
-                   
                 }
             }
-
-        }else if ($action === 'kiem_tra'){
-
-            if ($ds_thong_ke){
-                $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
-                echo json_encode($response);
-            }
-
         }
     }
 }

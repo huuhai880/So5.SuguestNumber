@@ -1,0 +1,60 @@
+.xac-trung {
+    font-size: .8rem
+}
+
+.xac-trung .table td,.xac-trung .table th {
+    padding: .3rem;
+}
+
+.xac-trung .table {
+    margin-bottom: 0;
+}
+
+.xac-trung .info {
+    text-align: right
+}
+
+.xac-trung .type {
+    text-align: left
+}
+
+.xac-trung .number-win span {
+    display: grid
+}
+
+.bet-sms .table {
+    margin-bottom: 0;
+}
+
+.bet-sms .table td,.bet-sms .table th {
+    border-top: none;
+}
+
+.bet-sms .card-body {
+    padding: .5rem
+}
+
+.bet-sms .table thead th {
+    border-bottom: 1px solid #dee2e6
+}
+
+.bet-sms .card-group>.card {
+    margin-bottom: 0
+}
+
+.bet-sms .msg-error,.bet-sms .number-win .card-body {
+    display: grid
+}
+
+.bet-sms .number-win .number-win-icon {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)
+}
+
+.label-sm {
+    font-size: .8rem;
+    margin: 0
+}

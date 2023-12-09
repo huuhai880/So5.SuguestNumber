@@ -1,0 +1,68 @@
+.app-background {
+    background-color: var(--app-background-color);
+}
+body, html {
+    height: 100%;
+}
+body {
+    font-family: Arial, Avenir, Helvetica, sans-serif !important;
+}
+:root {
+    --app-background-color: #fff;
+    --app-background-sub-color: #f3f3f3;
+    --app-background-summary-color: #e5e5e5;
+    --app-border-color: silver;
+    --app-text-main-color: #1e2329;
+    --app-text-sub-color: #707a8a;
+    --app-success-color: #5eba89;
+}
+#app, .table {
+    color: var(--app-text-main-color);
+}
+.bet-item .description, .list-group-item-action, .text-main, a, a:hover {
+    color: var(--app-text-main-color);
+}
+.customer-detail .content, .guide .tab-content, .report-detail .content {
+    background-color: var(--app-background-sub-color);
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+}
+.bet-item small, .text-sub {
+    color: var(--app-text-sub-color);
+}
+.custom-select, .form-control, .form-control:disabled, .form-control:focus, .form-control[readonly], .input-group-text {
+    background-color: var(--app-background-color);
+    border: 1px solid var(--app-border-color);
+    color: var(--app-text-main-color);
+}
+.config-com-rate .input-group-text {
+    width: 75px;
+}
+.input-group-sm>.custom-select, .input-group-sm>.form-control, .input-group-sm>.input-group-append>.btn, .input-group-sm>.input-group-append>.input-group-text, .input-group-sm>.input-group-prepend>.btn, .input-group-sm>.input-group-prepend>.input-group-text {
+    padding: 0.25rem 0.5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+.navbar-collapse {
+    flex-basis: 100%;
+    flex-grow: 1;
+    align-items: center;
+}
+.navbar-nav {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.nav-item {
+    align-self: center;
+}
+.priority-channel .input-group-text {
+    width: 65px;
+}
+footer{
+    height: 50px;
+}

@@ -60,7 +60,7 @@ include('app/session_control.php');
   <noscript><strong>We're sorry but GarenaLienQuan doesn't work properly without JavaScript
       enabled. Please enable it to continue.</strong></noscript>
   <?php
-    include('tin/web_tao_tin.php');
+  include('tin/web_tao_tin.php');
   ?>
   <?php include('nav.php') ?>
   <div id="app" class="z-theme-dark_">

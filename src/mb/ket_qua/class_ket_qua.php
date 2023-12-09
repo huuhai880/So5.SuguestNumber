@@ -280,20 +280,18 @@ class ket_qua_ngay
      */
     public function layKetQuaDai(string $tendai): ket_qua_dai
     {
-        if ($tendai === "mb" || $tendai === "Miền Bắc")
-            return $this->ket_qua_cac_dai[0];
+        return $this->ket_qua_cac_dai[0];
+            
+        // $ngay_xo = str_replace('/', '-', $this->ngay_xo); //Chuyển dạng dd/mm/yyyy sang dd-mm-yyyy để php nhận dạng đúng
+        // $day_of_week = date('w', strtotime($ngay_xo));
+        // $ds_dai = new DanhSachDai();
+        // $ten_dai_day_du = $ds_dai->LayTenTheoVietTat($tendai, $day_of_week);
+        // foreach ($this->ket_qua_cac_dai as $ketqua) {
 
-
-        $ngay_xo = str_replace('/', '-', $this->ngay_xo); //Chuyển dạng dd/mm/yyyy sang dd-mm-yyyy để php nhận dạng đúng
-        $day_of_week = date('w', strtotime($ngay_xo));
-        $ds_dai = new DanhSachDai();
-        $ten_dai_day_du = $ds_dai->LayTenTheoVietTat($tendai, $day_of_week);
-        foreach ($this->ket_qua_cac_dai as $ketqua) {
-
-            if ($ketqua->ten_dai === $ten_dai_day_du)
-                return $ketqua;
-        }
-        return new ket_qua_dai();
+        //     if ($ketqua->ten_dai === $ten_dai_day_du)
+        //         return $ketqua;
+        // }
+        // return new ket_qua_dai();
     }
 
     function DaXien(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
@@ -338,7 +336,7 @@ class ket_qua_dai
 
     function HaiConDau(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
     {
-        $giai_can_lay = (sizeof($this->cac_giai) == 9) ? 8 : 7; //Nam lấy 8, bắc lấy 7
+        $giai_can_lay =  7; //Nam lấy 8, bắc lấy 7
         $cac_so = explode(' ', $chi_tiet->so);
         $size_of_cac_so = sizeof($cac_so);
         foreach ($cac_so as $so) {
