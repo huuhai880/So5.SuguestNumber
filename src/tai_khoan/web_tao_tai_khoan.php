@@ -104,6 +104,7 @@ $cau_hinh = cau_hinh::LayCauHinh($ten_tai_khoan);
 
 $ds_chitiet_cau_hinh_mien_bac = $cau_hinh->lay_ds_chitiet_theo_vungmien('Miền Bắc');
 $ds_chitiet_cau_hinh_mien_nam = $cau_hinh->lay_ds_chitiet_theo_vungmien('Miền Nam');
+$ds_chitiet_cau_hinh_mien_trung = $cau_hinh->lay_ds_chitiet_theo_vungmien('Miền Trung');
 $ds_thu_tu_dai = $cau_hinh->getDsThuTuDai();
 
 function xuat_html_chitiet(array $ds_chi_tiet, int &$vi_tri_bat_dau): string

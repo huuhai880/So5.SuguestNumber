@@ -60,6 +60,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $ds_thong_ke = $result['ds_thong_ke'];
         $tin_moi = $result['tin'];
 
+        // Define a callback function for array_reduce
+        $grouped_by_so = array_reduce($ds_chi_tiet, function ($result, $item) {
+            $so = $item->so;
+
+            // Check if the key exists in the result array
+            if (!array_key_exists($so, $result)) {
+                $result[$so] = [];
+            }
+
+            // Append the current item to the result array under the corresponding key
+            $result[$so][] = $item;
+
+            return $result;
+        }, []);
+
         if ($action === 'luu') {
             if (isset($_POST["smsid"])) { //Cập nhật
                 $noi_dung_chinh_sua = 'Sửa bởi ' . $tin_moi->tai_khoan_tao . '\r\n';
@@ -91,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $thong_bao = "Lưu thành công!";
                     $luu_thanh_cong = true;
 
-                    $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$ds_chi_tiet, "message" => "success", 'status' => 200 );
+                    $response = array("data" => $ds_thong_ke,'ds_chi_tiet'=>$grouped_by_so, "message" => "success", 'status' => 200 );
 
                     echo json_encode($response);
 

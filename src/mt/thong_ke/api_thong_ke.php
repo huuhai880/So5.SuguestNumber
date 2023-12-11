@@ -81,9 +81,9 @@ if ($_POST["action"] === "doc") {
 
     // var_dump($thong_ke);
 
-    $response = array("thong_ke" => json_encode($thong_ke),'tin_list'=>$tin_list, "message" => "success", 'status' => 200 );
+    #$response = array("thong_ke" => json_encode($thong_ke),'tin_list'=>$tin_list, "message" => "success", 'status' => 200 );
 
-    // $response ["thong_ke"] = json_encode($thong_ke);
+    $response ["thong_ke"] = json_encode($thong_ke);
     echo json_encode($response);
 
      

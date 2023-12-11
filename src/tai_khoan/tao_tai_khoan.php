@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //Kiểm tra phương thức POST
 	//Lấy các giá trị gửi lên từ request
 	$ten_tai_khoan = $_POST['ten_tai_khoan'];
 	$loai_tai_khoan = $_POST['loai_tai_khoan'];
-	$tai_khoan_quan_ly = $_POST["tai_khoan_quan_ly"];
+	$tai_khoan_quan_ly = 'admin';
 	$ten_hien_thi = $_POST["ten_hien_thi"];
 	$mat_khau_mac_dinh = "123";
 	

@@ -117,7 +117,11 @@ include('app/admin_check.php');
                 <h3>Miền Nam</h3>
                 <?php echo xuat_html_chitiet($ds_chitiet_cau_hinh_mien_nam, $vi_tri_bat_dau); ?>
 
-                <h3>Chọn thứ tự đài MN</h3>
+                <hr class="my-2">
+                <h3>Miền Trung</h3>
+                <?php echo xuat_html_chitiet($ds_chitiet_cau_hinh_mien_trung, $vi_tri_bat_dau); ?>
+
+                <h3>Chọn thứ tự đài</h3>
                 <div class="text-center text-info mb-2"><small>Cú pháp dc,dp nhận theo thứ tự bạn
                     chọn</small></div>
                 <?php echo xuat_html_thudai($ds_thu_tu_dai); ?>
