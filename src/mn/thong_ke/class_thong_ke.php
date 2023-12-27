@@ -2,12 +2,12 @@
 class thong_ke
 {
     public $id, $ten_tai_khoan, $ten_hien_thi, $so_tin, $hai_c, $ba_c, $bon_c, $da_daxien,
-    $xac, $thuc_thu,  $tien_trung, $thang_thua, $so;
+    $xac, $thuc_thu,  $tien_trung, $thang_thua, $so, $diem_trung;
 
     public function __construct(){
         $this->ten_tai_khoan = $this->ten_hien_thi = $this->so = '';
         $this->so_tin = $this->hai_c = $this->ba_c =$this->bon_c = $this->da_daxien = $this->xac
-            = $this->thuc_thu = $this->tien_trung = $this->thang_thua = 0.0;
+            = $this->thuc_thu = $this->tien_trung = $this->thang_thua = $this->diem_trung = 0.0;
     }
 
     public function ghi_xuong_db()

@@ -19,15 +19,15 @@ class DanhSachDai
         $this->dais = array();
         $this->dais[] = new Ten('Phú Yên', 'py', array( "phu yen", "phuyen", "phu.yen", "pyen", "py", "p.y", "p yen", "p.yen","Py"));
         $this->dais[] = new Ten('Thừa T.Huế', 'hue', array("thua thien hue", "thu thien hue", "thua t hue", "tth", "th", "tthue", "tt hue", "t.t.hue", "hue"));
-        $this->dais[] = new Ten('Đắk Lắk', 'dl', array("dak lak", "daklak", "daclak", "dac lak", "dac.lak", "dak.lak", "daklac", "dak lac", "dlak", "dlac", "dlat", "dl", "daclac", "dac lac", "dac lat", "dat lac", "dat lak", "d.lak"));
-        $this->dais[] = new Ten('Quảng Nam', 'qn', array("quang nam", "quan nam", "quangnam", "quang.nam", "qnam", "q.nam", "qn"));
+        $this->dais[] = new Ten('Đắk Lắk', 'dl', array("dak lak", "daklak", "daclak", "dac lak", "dac.lak", "dak.lak", "daklac", "dak lac", "dlak", "dlac", "dlat", "dl", "daclac", "dac lac", "dac lat", "dat lac", "dat lak", "d.lak","dlk"));
+        $this->dais[] = new Ten('Quảng Nam', 'qn', array("quang nam", "quan nam", "quangnam", "quang.nam", "qnam", "q.nam", "qn",'qnm'));
         $this->dais[] = new Ten('Đà Nẵng', 'dn', array("da nang", "da.nang", "danang", "da nag", "da.nag", "danag", "dnang", "dnag", "dna", "d nang", "d.nang", "dng", "dn"));
         $this->dais[] = new Ten('Khánh Hòa', 'kh', array("khanh hoa", "khanh.hoa", "khanhhoa", "khahhoa", "khoa", "kha", "kh,hoa", "k.hoa", "k,hoa", "k hoa", "kh hoa", "kh"));
         $this->dais[] = new Ten('Bình Định', 'bd', array("binh dinh", "binh. dinh", "binh.dinh", "binhdinh", "bdinh", "b dinh", "b.dinh", "bdi", "bd"));
         $this->dais[] = new Ten('Quảng Trị', 'qt', array("quang tri", "quang. tri", "quan tri", "quangtri", "quang.tri", "qt", "qtri", "q.tri", "qtr"));
         $this->dais[] = new Ten('Quảng Bình', 'qb', array("quang binh", "quan binh", "quangbinh", "quang.binh", "qb", "qbinh", "q binh", "q.binh", "qbi"));
         $this->dais[] = new Ten('Gia Lai', 'gl', array("gja laj", "gia lai", "gia.lai", "gialai", "gjalaj", "gl", "glai", "g.lai", "gla"));
-        $this->dais[] = new Ten('Ninh Thuận', 'nth', array("ninh thuan", "ninh.thuan", "ninhthuan", "nt", "nthuan", "n.thuan", "nth"));
+        $this->dais[] = new Ten('Ninh Thuận', 'nth', array("ninh thuan", "ninh.thuan", "ninhthuan", "nt", "nthuan", "n.thuan", "nth",'Nth','Nt','nT','NT','NTH','nTH','ntH'));
         $this->dais[] = new Ten('Quảng Ngãi', 'qn', array("quang ngai", "quang.ngai", "quangngai", "quan ngai", "quan.ngai", "quanngai", "qngai", "q ngai", "q.ngai", "qng", "qn"));
         $this->dais[] = new Ten('Đắk Nông', 'dno', array("dak nong", "dac nong", "daknong", "dacnong", "dkn", "dnong", "dno", "d.nong"));
         $this->dais[] = new Ten('Kon Tum', 'kt', array("ktum", "kontum", "kontom", "komtum", "kumtum", "kuntum", "kon", "ktun", "ktu", "kt"));
@@ -54,7 +54,7 @@ class DanhSachDai
 
     private function LayVietTatCuaCode(string $code) : string
     {
-        if(preg_match('/1d|2d|3d|4d|1dai|2dai|3dai|4dai|dc|dp|chanh|phu/', $code))
+        if(preg_match('/1d|2d|3d|4d|1dai|2dai|3dai|4dai|dc|dp|chanh|phu|mt|mt:|MT|mT|Mt/', $code))
             return $code;
         foreach ($this->dais as $dai) {
             if(in_array($code, $dai->codes))
@@ -89,10 +89,14 @@ class DanhSachDai
     }
     public function LayTenTheoVietTat(string $ten_viet_tat, int $day_of_week) : string
     {
-        if ($ten_viet_tat === "bt" && $day_of_week == 2) //Thứ 
-                $tendai = 'Bến Tre'; //Nếu là thứ 3 thì bt là bến tre, còn lại là bình thuận
-        if ($ten_viet_tat === "bt" && $day_of_week == 4) //Thứ 
-                $tendai = 'Bình Thuận'; //Nếu là thứ 3 thì bt là bến tre, còn lại là bình thuận
+        if ($ten_viet_tat === "qn") {
+            if ($day_of_week == 2) {
+                return 'Quảng Nam';
+            } elseif ($day_of_week == 6) {
+                return 'Quảng Ngãi';
+            }
+        }
+
         foreach ($this->dais as $dai) {
             if($dai->viet_tat === $ten_viet_tat)
                 return $dai->ten;
@@ -149,8 +153,8 @@ class DanhSachKieu
             'daotloduoi'
         )
         );
-        $this->kieus[] = new Ten('Đá', 'da', array('da'));
-        $this->kieus[] = new Ten('Đá thẳng', 'dat', array('dat'));
+        $this->kieus[] = new Ten('Đá', 'da', array('da','_da'));
+        $this->kieus[] = new Ten('Đá thẳng', 'dat', array('dat','_dat'));
         $this->kieus[] = new Ten('Đá vòng', 'dav', array('dv', 'dav'));
         $this->kieus[] = new Ten('Đá xiên', 'dx', array('dx', 'dax', 'dxien', 'daxien', 'cheo'));
         $this->kieus[] = new Ten('Đá xiên vòng', 'dxv', array('dxv', 'daxv', 'dvx'));

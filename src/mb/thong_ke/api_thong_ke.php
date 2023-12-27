@@ -28,10 +28,8 @@ if ($_POST["action"] === "doc") {
 
     $ten_tai_khoan = $_POST['ten_tai_khoan'];
     $loai_tai_khoan = $_POST['loai_tai_khoan'];
-    if (($_POST["ngay"]) === "Tất cả")
-        $ngay = "Tất cả";
-    else
-        $ngay = date('Y-m-d', strtotime(str_replace(' ', '', $_POST["ngay"])));
+    
+    $ngay = date('Y-m-d', strtotime(str_replace(' ', '', $_POST["ngay"])));
     
     
     //$ten_tai_khoan = "admin1";
@@ -46,48 +44,56 @@ if ($_POST["action"] === "doc") {
     }
 
     //Cập nhật kết quả các tin trước khi đọc
-    tin::CapNhatKetQuaCacTin($ten_tai_khoan, $loai_tai_khoan);
+    tin::CapNhatKetQuaCacTin($ten_tai_khoan, $loai_tai_khoan, $ngay);
+
+    //Lấy danh sách thống kế
+
+    $result_thong_ke = tin::LayChiTietThongKeTin($ten_tai_khoan, $ngay);
 
     //Chuẩn bị danh sách các thống kê
     $thong_ke_list = array();
 
-    //Bắt đầu đọc tài khoản cấp dưới nếu có
-    $sql_connector = new sql_connector();
-    $sql_lay_tai_khoan = "SELECT ten_tai_khoan,ten_hien_thi FROM tai_khoan 
-                                        WHERE (tai_khoan_quan_ly = '$ten_tai_khoan') OR (ten_tai_khoan = '$ten_tai_khoan')";
-    
-    if ($result_tai_khoan = $sql_connector->get_query_result($sql_lay_tai_khoan)) {
-    
-        //Với mỗi tài khoản cấp dưới, tạo thống kê tương ứng
-        while ($row = $result_tai_khoan -> fetch_assoc()) {
+    $thong_ke = new thong_ke(); //Tạo thống kê với mỗi tài khoản
 
-            $ten_tk = $row['ten_tai_khoan']; //Lấy được tên tài khoản 
+   
 
-            $thong_ke = new thong_ke(); //Tạo thống kê với mỗi tài khoản
+    $thong_ke->ten_tai_khoan = $ten_tai_khoan; //Cập nhật
+    $thong_ke->ten_hien_thi = $ten_tai_khoan; //Cập nhật
 
-            $thong_ke->ten_tai_khoan = $row['ten_tai_khoan']; //Cập nhật
-            $thong_ke->ten_hien_thi = $row['ten_hien_thi']; //Cập nhật
+    //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
+    $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
+                        AND vung_mien='mb' AND thoi_gian_danh = '$ngay' AND trang_thai != -1 order by thoi_gian_danh ASC ";      
 
-            //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
-            if($ngay === "Tất cả"){
-                $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tk'";
-            }
-            else{
-                $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tk'
-                                AND thoi_gian_danh = '$ngay'";
-            }            
-            $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
-            $thong_ke = CapNhatThongKeTheoDanhSachTin($tin_list, $thong_ke); //Hàm cập nhật thống kê theo danh sách tin
-            // $thong_ke->TaoNoiDungSo($ngay);
-            // $thong_ke_list[] = $thong_ke;
-        }   
+    $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
+
+    $thong_ke = CapNhatThongKeTheoDanhSachTin($tin_list, $thong_ke); //Hàm cập nhật thống kê theo danh sách tin
+
+    # tạo câu truy vấn lấy chi tiết tin
+
+    $ds_chi_tiet = [];
+
+    foreach ($tin_list as $index_tin => $tin) {
+        // Call the 'lay_chi_tiet_cua_tin' method with the 'id' of the current '$tin' element
+        $chi_tiet_tin = chi_tiet_tin::lay_chi_tiet_cua_tin_trung($tin->id);
+
+        if(count($chi_tiet_tin) > 0){
+            // Use the index_tin as the key in $ds_chi_tiet
+            $ds_chi_tiet[$index_tin + 1] = $chi_tiet_tin;
+        }
         
     }
 
+
+    
     $response ["thong_ke"] = json_encode($thong_ke);
+
+    $response ["ds_chi_tiet"] = json_encode($ds_chi_tiet);
+
+    $response ["result_thong_ke"] = json_encode($result_thong_ke);
+
+
     echo json_encode($response);
 
-     
 }
 
 function CapNhatThongKeTheoDanhSachTin(array $tin_list, thong_ke $thong_ke): array

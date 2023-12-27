@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $ket_qua_kiem_tra = '';
     if (!isset($_POST["smsid"])) {
-        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung();
+        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung($_POST["tai_khoan_danh"]);
     }
 
     if ($ket_qua_kiem_tra){
@@ -49,6 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response = array("message" => $ket_qua_kiem_tra, 'status' => 400 );
         echo json_encode($response);
     }
+
+    
 
     if (empty($ket_qua_kiem_tra)) { //Nếu ko có lỗi
         $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();

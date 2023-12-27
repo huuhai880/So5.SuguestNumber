@@ -38,11 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $day_of_week = date('w', strtotime($tin_moi->thoi_gian_danh));
     $noi_dung_tin = new NoiDungTin($tin_moi->noi_dung, $day_of_week, $tin_moi->tai_khoan_danh);
 
+   
+
     $tin_moi->noi_dung = $noi_dung_tin->noi_dung_str; //Cập nhật lại nội dung đã được chuẩn hoá
 
     $ket_qua_kiem_tra = '';
     if (!isset($_POST["smsid"])) {
-        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung();
+        $ket_qua_kiem_tra = $noi_dung_tin->KiemTraNoiDung($_POST["tai_khoan_danh"]);
     }
 
     if ($ket_qua_kiem_tra){
@@ -54,11 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($ket_qua_kiem_tra)) { //Nếu ko có lỗi
         $ds_chi_tiet = $noi_dung_tin->BocTachDaiSoKieu();
 
-       
-        
         $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
-
-      
 
         $ds_chi_tiet = $result['ds_chi_tiet'];
         $ds_thong_ke = $result['ds_thong_ke'];

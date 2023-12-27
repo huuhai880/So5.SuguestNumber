@@ -103,26 +103,22 @@ class cau_hinh
     }
     public function lay_chi_tiet_2d_dau(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("2D-Đầu", "Miền Bắc");
+        
         return $this->lay_chi_tiet_cau_hinh("2D-Đầu", $vung_mien);
     }
     public function lay_chi_tiet_2d_duoi(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("2D-Đuôi", "Miền Bắc");
+        
         return $this->lay_chi_tiet_cau_hinh("2D-Đuôi", $vung_mien);
     }
     public function lay_chi_tiet_xiu_dau(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("3D-Đầu", "Miền Bắc");
+        
         return $this->lay_chi_tiet_cau_hinh("3D-Đầu", $vung_mien);
     }
     public function lay_chi_tiet_xiu_duoi(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("3D-Đuôi", "Miền Bắc");
+        
         return $this->lay_chi_tiet_cau_hinh("3D-Đuôi", $vung_mien);
     }
     public function lay_chi_tiet_bao_lo(string $vung_mien, int $con):chi_tiet_cau_hinh
@@ -143,15 +139,15 @@ class cau_hinh
     }
     public function lay_chi_tiet_da_xien():chi_tiet_cau_hinh
     {
-        return $this->lay_chi_tiet_cau_hinh("Đá Xiên", "Miền Nam");
+        return $this->lay_chi_tiet_cau_hinh("Đá Xiên", "Miền Trung");
     }
     public function lay_chi_tiet_7lo_2con():chi_tiet_cau_hinh
     {
-        return $this->lay_chi_tiet_cau_hinh("2D-7Lô", "Miền Nam");
+        return $this->lay_chi_tiet_cau_hinh("2D-7Lô", "Miền Trung");
     }
     public function lay_chi_tiet_7lo_3con():chi_tiet_cau_hinh
     {
-        return $this->lay_chi_tiet_cau_hinh("3D-7Lô", "Miền Nam");
+        return $this->lay_chi_tiet_cau_hinh("3D-7Lô", "Miền Trung");
     }
     public function lay_ten_dai_theo_thu_tu(int $day_of_week) : string{
         foreach ($this->ds_thu_tu_dai as $thu_tu_dai) {

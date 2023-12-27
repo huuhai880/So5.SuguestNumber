@@ -36,8 +36,6 @@ if ($_POST["action"] === "doc") {
     $response['success'] = 1;
 }
 
-
-
 //-------------------------Nếu là ghi  ---------------------------------
 if ($_POST["action"] === "ghi") {
     $response['log'] .= "action=ghi;";
@@ -53,7 +51,8 @@ if ($_POST["action"] === "xoa") {
 //-------------------------Nếu là Cập Nhật chi tiết kiểu đánh  ---------------------------------
 if ($_POST["action"] === "cap_nhat_chi_tiet") {
     $response['log'] .= "action = cap nhat chi tiet;";
-    if (!isset($_POST["id"]) || !isset($_POST["co"]) || !isset($_POST["trung"])) {
+
+    if (!isset($_POST["config_price"])) {
         //Nếu chưa có thông tin thì thoát
         $response['log'] .= "không rõ chi tiết gửi xuống";
         $response['success'] = 0;
@@ -61,21 +60,47 @@ if ($_POST["action"] === "cap_nhat_chi_tiet") {
         exit();
     }
 
-    $id = $_POST['id'];
-    $co = $_POST['co'];
-    $trung = $_POST['trung'];
+    $config_price = $_POST['config_price'];
+    $ten_tai_khoan = $_POST['ten_tai_khoan'];
 
-    $chi_tiet_cau_hinh = new chi_tiet_cau_hinh();
-    $chi_tiet_cau_hinh->id = $id;
-    $chi_tiet_cau_hinh->co = $co;
-    $chi_tiet_cau_hinh->trung = $trung;
+    $cau_hinh = cau_hinh::LayCauHinh($ten_tai_khoan);
 
-    if($chi_tiet_cau_hinh->cap_nhat_xuong_db())
-        $response['success'] = 1;
-    else
-        $response['success'] = 0;
-    //Xuất ra
-    $response['chi_tiet_cau_hinh'] = json_encode($chi_tiet_cau_hinh);
+    $id_cau_hinh = $cau_hinh->id;
+
+    if (isset($id_cau_hinh)){
+
+        $jsonString = str_replace("'", '"', $config_price);
+        $array_price = json_decode($jsonString, true);
+        
+        if ($array_price === null && json_last_error() !== JSON_ERROR_NONE) {
+            
+            $response['log'] .= "không rõ chi tiết gửi xuống";
+            $response['success'] = 0;
+            echo json_encode($response);
+
+        } else {
+
+            if(isset($array_price)){
+
+                foreach ($array_price as $price) {
+        
+                    $chi_tiet_cau_hinh = new chi_tiet_cau_hinh();
+                    $chi_tiet_cau_hinh->id_cau_hinh = $id_cau_hinh; 
+                    $chi_tiet_cau_hinh->co = $price['co']; 
+                    $chi_tiet_cau_hinh->trung = $price['trung'];
+                    $chi_tiet_cau_hinh->vung_mien = $price['vung_mien']; 
+                    
+                    $chi_tiet_cau_hinh->cap_nhat_xuong_db();
+        
+                }
+            }
+            
+            $response['success'] = 1;
+
+            $response['chi_tiet_cau_hinh'] = json_encode($response);
+        }
+    }
+    
 }
 
 //-------------------------Nếu là Cập Nhật chi tiết Thứ tự đài  ---------------------------------

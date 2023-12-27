@@ -1,6 +1,6 @@
 <?php 
     class db_info{
-        public const MAY_CHU = "172.28.0.3";
+        public const MAY_CHU = "172.28.0.1";
         //public const MAY_CHU = '213.136.93.171'; //contabo
         public const TAI_KHOAN = "root";
         public const MAT_KHAU = "50612596";

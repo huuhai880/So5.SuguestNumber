@@ -277,11 +277,13 @@ class chi_tiet_cau_hinh
         foreach ($var as $key => $value)
             $this->{$key} = $value;
     }
+
     public function cap_nhat_xuong_db(sql_connector $sql_connector = null){
         $sql_connector = $sql_connector?? new sql_connector();
-        $sql_chi_tiet = "UPDATE chi_tiet_cau_hinh SET co = '$this->co', trung='$this->trung' WHERE id = '$this->id'";
+        $sql_chi_tiet = "UPDATE chi_tiet_cau_hinh SET co = '$this->co', trung='$this->trung' WHERE vung_mien = '$this->vung_mien' AND kieu_danh ='$this->kieu' AND id_cau_hinh='$this->id_cau_hinh' ";
         return $sql_connector->get_query_result($sql_chi_tiet);
     }
+    
 
 }
 

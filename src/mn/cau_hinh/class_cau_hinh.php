@@ -52,7 +52,7 @@ class cau_hinh
                 $row = $result->fetch_assoc();
                 $cau_hinh->id = $row["id"];
                 $cau_hinh->tai_khoan = $row["tai_khoan"];
-                $sql_chi_tiet = "SELECT * FROM chi_tiet_cau_hinh WHERE id_cau_hinh = '$cau_hinh->id'";
+                $sql_chi_tiet = "SELECT * FROM chi_tiet_cau_hinh WHERE id_cau_hinh = '$cau_hinh->id' AND vung_mien='Miền Nam'";
                 if ($result_chi_tiet = $sql_connector->get_query_result($sql_chi_tiet)) {
                     while ($row = $result_chi_tiet->fetch_assoc()) {
                         $chi_tiet_cau_hinh = new chi_tiet_cau_hinh();
@@ -103,43 +103,38 @@ class cau_hinh
     }
     public function lay_chi_tiet_2d_dau(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("2D-Đầu", "Miền Bắc");
-        return $this->lay_chi_tiet_cau_hinh("2D-Đầu", $vung_mien);
+        return $this->lay_chi_tiet_cau_hinh("2D-Đầu", "Miền Nam");
     }
     public function lay_chi_tiet_2d_duoi(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("2D-Đuôi", "Miền Bắc");
-        return $this->lay_chi_tiet_cau_hinh("2D-Đuôi", $vung_mien);
+        
+        return $this->lay_chi_tiet_cau_hinh("2D-Đuôi", "Miền Nam");
     }
     public function lay_chi_tiet_xiu_dau(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("3D-Đầu", "Miền Bắc");
-        return $this->lay_chi_tiet_cau_hinh("3D-Đầu", $vung_mien);
+        
+        return $this->lay_chi_tiet_cau_hinh("3D-Đầu", "Miền Nam");
     }
     public function lay_chi_tiet_xiu_duoi(string $vung_mien):chi_tiet_cau_hinh
     {
-        if ($vung_mien === 'mb')
-            return $this->lay_chi_tiet_cau_hinh("3D-Đuôi", "Miền Bắc");
-        return $this->lay_chi_tiet_cau_hinh("3D-Đuôi", $vung_mien);
+        
+        return $this->lay_chi_tiet_cau_hinh("3D-Đuôi", "Miền Nam");
     }
     public function lay_chi_tiet_bao_lo(string $vung_mien, int $con):chi_tiet_cau_hinh
     {
         if($con == 2)
-            return $this->lay_chi_tiet_cau_hinh("2D-Bao", $vung_mien);
+            return $this->lay_chi_tiet_cau_hinh("2D-Bao", "Miền Nam");
 
         if($con == 3)
-            return $this->lay_chi_tiet_cau_hinh("3D-Bao", $vung_mien);
+            return $this->lay_chi_tiet_cau_hinh("3D-Bao", "Miền Nam");
 
         if($con == 4)
-            return $this->lay_chi_tiet_cau_hinh("4D-Bao", $vung_mien);
+            return $this->lay_chi_tiet_cau_hinh("4D-Bao", "Miền Nam");
         return new chi_tiet_cau_hinh();
     }
     public function lay_chi_tiet_da(string $vung_mien):chi_tiet_cau_hinh
     {
-        return $this->lay_chi_tiet_cau_hinh("Đá Thẳng", $vung_mien);
+        return $this->lay_chi_tiet_cau_hinh("Đá Thẳng", "Miền Nam");
     }
     public function lay_chi_tiet_da_xien():chi_tiet_cau_hinh
     {
@@ -279,7 +274,7 @@ class chi_tiet_cau_hinh
     }
     public function cap_nhat_xuong_db(sql_connector $sql_connector = null){
         $sql_connector = $sql_connector?? new sql_connector();
-        $sql_chi_tiet = "UPDATE chi_tiet_cau_hinh SET co = '$this->co', trung='$this->trung' WHERE id = '$this->id'";
+        $sql_chi_tiet = "UPDATE chi_tiet_cau_hinh SET co = '$this->co', trung='$this->trung' WHERE id = '$this->vung_mien' AND id_cau_hinh='$this->id_cau_hinh' ";
         return $sql_connector->get_query_result($sql_chi_tiet);
     }
 

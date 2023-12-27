@@ -33,9 +33,9 @@ class DanhSachDai
         $this->dais[] = new Ten('Trà Vinh', 'tv', array("tra vinh", "tra. vinh", "tra.vinh", "travinh", "trvinh", "trav", "tvinh", "t.vinh", "t vinh", "tv", "t.v", "trv", "dai tra vinh"));
         $this->dais[] = new Ten('Long An', 'la', array("long an", "log an", "longan", "logan", "long.an", "log.an", "lg.an", "l.an", "lan", "la", "l.a", "dai long an"));
         $this->dais[] = new Ten('Hậu Giang', 'hg', array("hau giang", "haugiang", "hau.giang", "hau. giang", "hgiang", "h.giang", "hg", "dai hau giang"));
-        $this->dais[] = new Ten('Tiền Giang', 'tg', array("tien giang", "tien.giang", "tiengiang", "tienggiang", "tgiang", "t giang", "t.giang", "tg", "tgi", "tgiag", "dai tien giang"));
+        $this->dais[] = new Ten('Tiền Giang', 'tg', array("tien giang", "tien.giang", "tiengiang", "tienggiang", "tgiang", "t giang", "t.giang", "tg", "tgi", "tgiag", "dai tien giang","TG"));
         $this->dais[] = new Ten('Kiên Giang', 'kg', array("kien giang", "kieng giang", "kiengiang", "kgiang", "k.giang", "kg", "k.g", "kgi", "dai kien giang"));
-        $this->dais[] = new Ten('Đà Lạt', 'dl', array("da lat", "da. lat", "da lac", "dalat", "da.lat", "dalac", "da.lac", "dalt", "dal", "dl", "dlat", "d.lat", "dai da lat"));
+        $this->dais[] = new Ten('Đà Lạt', 'dl', array("da lat", "da. lat", "da lac", "dalat", "da.lat", "dalac", "da.lac", "dalt", "dal", "dl", "dlat", "d.lat", "dai da lat",'Đl'));
         $this->dais[] = new Ten('Bình Phước', 'bp', array("binh phuoc", "binhphuoc", "binh.phuoc", "binh. phuoc", "bphuoc", "phuoc", "b.phuoc", "bp", "dai binh phuoc"));
     }
     private function LaCode(string $code, int $day_of_week) : bool
@@ -95,14 +95,23 @@ class DanhSachDai
     }
     public function LayTenTheoVietTat(string $ten_viet_tat, int $day_of_week) : string
     {
-        if ($ten_viet_tat === "bt" && $day_of_week == 2) //Thứ 
-                $tendai = 'Bến Tre'; //Nếu là thứ 3 thì bt là bến tre, còn lại là bình thuận
-        if ($ten_viet_tat === "bt" && $day_of_week == 4) //Thứ 
-                $tendai = 'Bình Thuận'; //Nếu là thứ 3 thì bt là bến tre, còn lại là bình thuận
+        if ($ten_viet_tat === "bt") {
+            if ($day_of_week == 2) {
+                return 'Bến Tre';
+            } elseif ($day_of_week == 4) {
+                return 'Bình Thuận';
+            }
+        }
+    
         foreach ($this->dais as $dai) {
+
+            // var_dump( $dai->ten);
+
             if($dai->viet_tat === $ten_viet_tat)
+
                 return $dai->ten;
         }
+
         return '';
     }
 
@@ -139,8 +148,8 @@ class DanhSachKieu
             "daoxduoi", "daoxiuduoi", "daoxcduoi", "daoxchuduoi", "daoxiuchuduoi", "daoxdui", "daoxiudui", "daoxcdui", "daoxchudui", "daoxiuchdui", "daoxchdui", "daoxiuchudui", "dxcduoi", "dxcdui", "xduidao", "xcduoidao", "xcduidao", "xcdaodui", "xcdaoduoi", "xdaoduoi", "xdaodui", "xduoidao", "tlduoidao", "tlduidao"
         )
         );
-        $this->kieus[] = new Ten('Đá', 'da', array('da'));
-        $this->kieus[] = new Ten('Đá thẳng', 'dat', array('dat'));
+        $this->kieus[] = new Ten('Đá', 'da', array('da','_da'));
+        $this->kieus[] = new Ten('Đá thẳng', 'dat', array('dat','_dat'));
         $this->kieus[] = new Ten('Đá vòng', 'dav', array('dv', 'dav'));
         $this->kieus[] = new Ten('Đá xiên', 'dx', array('dx', 'dax', 'dxien', 'daxien', 'cheo'));
         $this->kieus[] = new Ten('Đá xiên vòng', 'dxv', array('dxv', 'daxv', 'dvx'));
@@ -158,8 +167,8 @@ class DanhSachKieu
 
     public function LayVietTatTheoCode(string $code) : string
     {
-        //if($code === 'bd' && $day_of_week == 5) //Neu la bd va thu 6 thi ko phai code
-            //return '';
+        if($code === 'bd' && $day_of_week == 5) //Neu la bd va thu 6 thi ko phai code
+            return '';
         foreach ($this->kieus as $kieu) {
             if(in_array($code, $kieu->codes))
                 return $kieu->viet_tat;

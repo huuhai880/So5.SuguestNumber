@@ -3,13 +3,15 @@ $dir_name = dirname(__FILE__);
 include_once($dir_name . '/class_ds_dai_kieu.php');
 include_once($dir_name . '/class_tin.php');
 include_once(dirname($dir_name) . '/cau_hinh/class_cau_hinh.php');
+include_once(dirname($dir_name) . '/tin/class_tin.php');
+require_once(dirname($dir_name) . '/app/class_sql_connector.php');
 
 class ChiTietBocTach
 {
     public $dai, $so = array(), $kieu, $diem;
     public function XuatHTML()
     {
-        $html = "<span class='tg-spoiler'>" . $this->dai . implode('.', $this->so) . $this->kieu . $this->diem . '</span>';
+        $html = "<b>" . $this->dai . implode('.', $this->so) . $this->kieu . $this->diem . '</b>';
         echo $html;
     }
     /**
@@ -78,6 +80,11 @@ class NoiDungTin
             $tin
         );
 
+        $tin = str_replace(
+            array('keo', 'den'),
+            'k',
+            $tin
+        );
         //Thêm khoảng trắng
         
         $tin = str_replace(array("\r", "\n", "\r\n"), ' ', $tin); //Thay ký tự xống dòng bằng khoảng trắng
@@ -89,7 +96,7 @@ class NoiDungTin
         $tin = preg_replace('/(\D\d+)(\.)(\d\D|\d$)/', '$1,$3', $tin);
         //Thay dấu chấm giữa hai đài bằng dấu phẩy
         $tin = preg_replace('/(^|\s)(hn|mb|hanoi|tp|hcm|dt|cm|camau|bt|btr|btre|vt|blieu|baclieu|dn|ct|st|soctrang|tn|ag|bt|binhthuan|vl|sbe|bd|sb|tv|travinh|la|hg|haugiang|tg|kg|dl|dalat|bp|binhphuoc|py|hue|dl|qn|kh|bd|qt|qb|gl|nth|dno|kt)(\s*)(.)(\s*)(hn|mb|hanoi|tp|hcm|dt|cm|camau|bt|btr|btre|vt|blieu|baclieu|dn|ct|st|soctrang|tn|ag|bt|binhthuan|vl|sbe|bd|sb|tv|travinh|la|hg|haugiang|tg|kg|dl|dalat|bp|binhphuoc|py|hue|dl|qn|kh|bd|qt|qb|gl|nth|dno|kt)(\s)/', '$1$2$3,$5$6$7', $tin);
-        $tin = str_replace(array('.','-', ';', ':', '\'', '\"'), ' ', $tin); //Thay các ký tự phân cách bằng khoảng trắng
+        $tin = str_replace(array('.','-', ';', '/', '...', ':', '\'', '\"'), ' ', $tin); //Thay các ký tự phân cách bằng khoảng trắng
 
         //Thay dấu phẩy nằm giữa mà hai bên đều có ít nhất 2 chữ số (và có thể có khoảng trắng)bằng khoảng trắng
         $tin = preg_replace('/(?<=\d{2})\s*,\s*(?=\d{2})/', ' ', $tin);
@@ -191,7 +198,8 @@ class NoiDungTin
                     $chi_tiet_boc_tach->dai = $ds_dai->LayVietTatTheoCode($this->noi_dung_arr[$vi_tri_dai_cua_kieu]);
 
                 //Số
-                $chi_tiet_boc_tach->so = $this->LaySoCuaKieu($i); //Số
+                $chi_tiet_boc_tach->so = $this->LaySoCuaKieu($i, $kieu_viet_tat); //Số
+
                 //Điểm, chuẩn hoá về dấu . thay cho dấu, để đúng định dạng kiểu số thực
                 $vi_tri_diem_cua_kieu = $this->LayViTriDiemCuaKieu($i); //Điểm
                 $chi_tiet_boc_tach->diem = str_replace(',', '.', $this->noi_dung_arr[$vi_tri_diem_cua_kieu]);
@@ -199,6 +207,7 @@ class NoiDungTin
                 $ket_qua[] = $chi_tiet_boc_tach;
             }
         }
+
         $ket_qua = NoiDungTin::TachTinTheoSoCon($ket_qua);
         $ket_qua = NoiDungTin::ChuanHoaSoTheoKieu($ket_qua);
         $ket_qua = NoiDungTin::Doi2D3DThanhTenDai($ket_qua, $ds_dai_viettat_theothutu);
@@ -298,17 +307,48 @@ class NoiDungTin
         return -1;
     }
 
-    public function LaySoCuaKieu(int $index_of_kieu): array
+    public function LaySoCuaKieu(int $index_of_kieu, $kieu): array
     {
         $result = array();
         if ($index_of_kieu <= 0 || $index_of_kieu >= count($this->noi_dung_arr))
             return $result; //Không hợp lệ, return empty array
 
         $i = $index_of_kieu - 1;
+
+        $kieu_after = 0;
+
         while ($i > 0) {
+
             if ($this->laSo($i)) {
-                $result[] = $this->noi_dung_arr[$i];
-            } else {
+                
+                $so_before = $this->noi_dung_arr[$i];
+
+                if($kieu_after > 0 ){
+
+                    $so_before = substr($this->noi_dung_arr[$i], $kieu_after);
+                    
+                    #kiểm tra nếu độ dài số lớn trừ đi số kiểu phía trước nhỏ hơn 2 thì lấy hai số cuối của số
+                    if((strlen($this->noi_dung_arr[$i]) - $kieu_after) <= 2 ){
+                        $so_before = substr($this->noi_dung_arr[$i], -2);
+                    }
+                }
+                
+                if($kieu =='xc' && strlen($so_before) >=3){
+
+                    $result[] = substr($so_before, -3);
+                    
+                }elseif(($kieu =='dau' || $kieu =='duoi' || $kieu =='dauduoi') && strlen($so_before) >=2){
+
+                    $result[] = substr($so_before, -2);
+                    
+                }else{
+                    $result[] = $so_before;
+                }
+                
+            }elseif($this->laKieu($i)){
+                $kieu_after +=1;
+            } 
+            else {
                 if (count($result) > 0)
                     return array_reverse($result);
             }
@@ -619,11 +659,11 @@ class NoiDungTin
     }
     //================================== PHẦN CÁC HÀM KIỂM TRA TIN ===================================
 
-    public function KiemTraNoiDung()
+    public function KiemTraNoiDung($ten_tai_khoan)
     {
         $ket_qua_kiem_tra = '';
         if (strlen($this->noi_dung_str) < 6) { //Nếu tin quá ngắng
-            return "<span class='tg-spoiler'>Tin quá ngắn </span>";
+            return "<b>Tin quá ngắn </b>";
         }
 
         if (($ket_qua_kiem_tra = $this->TinBatDauBangDai()) != '') {
@@ -639,7 +679,7 @@ class NoiDungTin
             return $ket_qua_kiem_tra;
         }
 
-        if (($ket_qua_kiem_tra = $this->KiemTraDaiTheoNgayDanh()) != '') {
+        if (($ket_qua_kiem_tra = $this->KiemTraDaiTheoNgayDanh($ten_tai_khoan)) != '') {
 
             return $ket_qua_kiem_tra;
         }
@@ -647,7 +687,7 @@ class NoiDungTin
 
             return $ket_qua_kiem_tra;
         }
-        if (($ket_qua_kiem_tra = $this->KiemTraSoCuaKieu()) != '') {
+        if (($ket_qua_kiem_tra = $this->KiemTraSoCuaKieu($ten_tai_khoan)) != '') {
 
             return $ket_qua_kiem_tra;
         }
@@ -662,10 +702,26 @@ class NoiDungTin
      * Hàm kiểm tra: Kiểu không có số
      * Số hợp lệ của các kiểu đánh
      */
-    public function KiemTraSoCuaKieu()
-    {
+    public function KiemTraSoCuaKieu($ten_tai_khoan)
+    {   
+
+        $sql_connector = new sql_connector();
+        # lấy danh sách số chặn
+        $sql_lay_limit_number = "SELECT * FROM `limit_number` WHERE `tai_khoan_tao` = '$ten_tai_khoan' AND `vung_mien` ='mn' AND `dai_limit` IS NULL AND `number_limit` IS NOT NULL";      
+
+        
+        $lst_number_limit =[];
+
+        if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
+            while ($row = $limit_number->fetch_assoc()) {
+
+                $lst_number_limit[] = $row['number_limit'];
+            }
+        }
+
+        
         $dsKieu = new DanhSachKieu();
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "<b>";
         $tu_ko_hop_le = '';
         //Duyệt các từ
         for ($i = 0; $i < count($this->noi_dung_arr); $i++) {
@@ -681,7 +737,15 @@ class NoiDungTin
                 } else {
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                 }
-
+                
+                #kiểm tra số chặn
+                
+                $check_so_chan = $this->KiemTraSoChan($i, $start, $end, $lst_number_limit);
+                
+                if(empty($check_so_chan) == false){
+                    return $check_so_chan;
+                }
+                
 
                 $vietTatKieu = $dsKieu->LayVietTatTheoCode($item);
                 $ket_qua = '';
@@ -726,9 +790,9 @@ class NoiDungTin
                 }
             }
         }
-        $html_tin .= '</span>';
+        $html_tin .= '</b>';
         if (strlen($tu_ko_hop_le) > 0) {
-            $tu_ko_hop_le = "<span class='tg-spoiler'>Lỗi cú pháp, không nhận diện được số đánh cảu kiểu : " . $tu_ko_hop_le . "</span>";
+            $tu_ko_hop_le = "<b>Lỗi cú pháp, không nhận diện được số đánh cảu kiểu : " . $tu_ko_hop_le . "</b>";
             return $html_tin . $tu_ko_hop_le;
         }
         return '';
@@ -737,7 +801,7 @@ class NoiDungTin
     public function KiemTraTuHopLe(): string
     {
         $size = count($this->noi_dung_arr);
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "<b>";
         $tu_ko_hop_le = '';
         $ds_dai = new DanhSachDai();
         $ds_kieu = new DanhSachKieu();
@@ -763,18 +827,33 @@ class NoiDungTin
                 }
             }
         }
-        $html_tin .= '</span>';
+        $html_tin .= '</b>';
         if (strlen($tu_ko_hop_le) > 0) {
-            $tu_ko_hop_le = "<span class='tg-spoiler'>Lỗi, các từ : " . $tu_ko_hop_le . " không nhận diện được</span>";
+            $tu_ko_hop_le = "<b>Lỗi, các từ : " . $tu_ko_hop_le . " không nhận diện được</b>";
             return $html_tin . $tu_ko_hop_le;
         }
         return '';
     }
-    public function KiemTraDaiTheoNgayDanh(): string
-    {
+    public function KiemTraDaiTheoNgayDanh($ten_tai_khoan): string
+    {   
+
+        $sql_connector = new sql_connector();
+        # lấy danh sách số chặn
+        $sql_lay_dai_number = "SELECT * FROM `limit_number` WHERE `tai_khoan_tao` = '$ten_tai_khoan' AND `vung_mien` ='mn' AND `dai_limit` IS NOT NULL AND `number_limit` IS NULL";      
+
+        
+        $lst_number_limit =[];
+
+        if ($limit_number = $sql_connector->get_query_result($sql_lay_dai_number)) {
+            while ($row = $limit_number->fetch_assoc()) {
+
+                $lst_number_limit[] = $row['dai_limit'];
+            }
+        }
+
         $size = count($this->noi_dung_arr);
         $ds_dai = new DanhSachDai();
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "<b>";
         $tu_ko_hop_le = '';
         for ($i = 0; $i < $size; $i++) {
             if ($this->laDai($i)) {
@@ -783,8 +862,14 @@ class NoiDungTin
                 foreach ($dai_s as $dai) {
                     if(in_array($ds_dai->LayVietTatTheoCode($dai), NoiDungTin::$thu_dais[$this->day_of_week]) == false)
                         $dai_hop_le = false;
-                    if(preg_match("/1d|2d|3d|4d|1dai|2dai|3dai|4dai|dc|dp|chinh|chanh|phu|mb/", $dai)) //Nếu là 1 từ 2d, 3d... thì đúng
+                    if(preg_match("/1d|2d|3d|4d|1dai|2dai|3dai|4dai|dc|dp|chinh|chanh|phu/", $dai)) //Nếu là 1 từ 2d, 3d... thì đúng
                         $dai_hop_le = true;
+
+                    #kiểm tra xem đài bị chặn thì báo lỗi
+                    if (in_array($dai, $lst_number_limit)) {
+                        $dai_hop_le = false;
+                    }
+
                 }
                 if ($dai_hop_le) {
                     //Hợp lệ theo thứ
@@ -797,7 +882,7 @@ class NoiDungTin
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</span>';
+        $html_tin .= '</b>';
         if (strlen($tu_ko_hop_le) > 0) {
             $thu = ($this->day_of_week == 0) ? 'Chủ nhật' : 'Thứ ' . ($this->day_of_week + 1);
             $tu_ko_hop_le = "<pre>" . $thu . " không nhận đài : " . $tu_ko_hop_le . "</pre>";
@@ -808,7 +893,7 @@ class NoiDungTin
     public function KiemTra4d4dai(): string
     {
         $size = count($this->noi_dung_arr);
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "<b>";
         $tu_ko_hop_le = '';
         for ($i = 0; $i < $size; $i++) { 
             if ($this->laDai($i)) {
@@ -828,7 +913,7 @@ class NoiDungTin
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</span>';
+        $html_tin .= '</b>';
         if (strlen($tu_ko_hop_le) > 0) {
             $tu_ko_hop_le = "<pre>" . $tu_ko_hop_le . "chỉ nhận vào thứ 7 </pre>";
             $ket_qua = $html_tin . $tu_ko_hop_le;
@@ -840,7 +925,7 @@ class NoiDungTin
     public function KiemTraDiemCuaKieu(): string
     {
         $size = count($this->noi_dung_arr);
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "<b>";
         $tu_ko_hop_le = '';
         for ($i = 0; $i < $size; $i++) {
             if ($this->laKieu($i)) {
@@ -854,7 +939,7 @@ class NoiDungTin
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</span>';
+        $html_tin .= '</b>';
         if (strlen($tu_ko_hop_le) > 0) {
             $tu_ko_hop_le = "<pre> Lỗi cú pháp: Không nhận diện được điểm đánh của kiểu " . $tu_ko_hop_le . " có thể điểm đánh không đúng </pre>";
             $ket_qua = $html_tin . $tu_ko_hop_le;
@@ -865,7 +950,7 @@ class NoiDungTin
 
     public function TinBatDauBangDai()
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $danh_sach_cac_tu_khong_hop_le = "";
         $dsDai = new DanhSachDai();
         //Duyệt các từ
@@ -883,7 +968,7 @@ class NoiDungTin
                 $html_output .= $item . " ";
             }
         }
-        $html_output .= "</span>";
+        $html_output .= "</b>";
 
         if (empty($danh_sach_cac_tu_khong_hop_le) == false) {
             $danh_sach_cac_tu_khong_hop_le = "<pre> Tin phải bắt đầu bằng tên đài </pre>";
@@ -894,7 +979,7 @@ class NoiDungTin
 
     public function KiemTraDinhDangSoKeo()
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $danh_sach_cac_tu_khong_hop_le = "";
         $dsDai = new DanhSachDai();
         //Duyệt các từ
@@ -913,7 +998,7 @@ class NoiDungTin
                 $html_output .= $item . " ";
             }
         }
-        $html_output .= "</span>";
+        $html_output .= "</b>";
 
         if (empty($danh_sach_cac_tu_khong_hop_le) == false) {
             $danh_sach_cac_tu_khong_hop_le = "<pre> Số :". $danh_sach_cac_tu_khong_hop_le. "không đúng định dạng số kéo </pre>";
@@ -922,14 +1007,15 @@ class NoiDungTin
         return "";
     }
 
-    public function KiemTraSoDauDuoi(int $index_of_kieu, int $start, int $end): string
+    public function KiemTraSoChan(int $index_of_kieu, int $start, int $end, $lst_number_limit): string
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $tu_khong_hop_le = '';
         $arr_length = count($this->noi_dung_arr);
         for ($i = 0; $i < $arr_length; $i++) {
             if ($i >= $start && $i <= $end) {
-                if (NoiDungTin::DemSoKyTuCuaSo($this->noi_dung_arr[$i])==2)
+
+                if (!in_array($this->noi_dung_arr[$i], $lst_number_limit))
                     $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường
                 else {
                     $html_output .= '<code>' . $this->noi_dung_arr[$i] . '</code> '; //thì tô sáng
@@ -938,7 +1024,31 @@ class NoiDungTin
             } else
                 $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường 
         }
-        $html_output .= '</span>';
+        $html_output .= '</b>';
+        if (strlen($tu_khong_hop_le) > 0) {
+            $tu_khong_hop_le = "<pre> Tin không nhận, " . $tu_khong_hop_le . " bị chặn trong mn" . ".</pre>";
+            return $html_output . $tu_khong_hop_le;
+        }
+        return '';
+    }
+
+    public function KiemTraSoDauDuoi(int $index_of_kieu, int $start, int $end): string
+    {
+        $html_output = "<b>";
+        $tu_khong_hop_le = '';
+        $arr_length = count($this->noi_dung_arr);
+        for ($i = 0; $i < $arr_length; $i++) {
+            if ($i >= $start && $i <= $end) {
+                if (NoiDungTin::DemSoKyTuCuaSo($this->noi_dung_arr[$i])>=2)
+                    $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường
+                else {
+                    $html_output .= '<code>' . $this->noi_dung_arr[$i] . '</code> '; //thì tô sáng
+                    $tu_khong_hop_le .= $this->noi_dung_arr[$i] . ', ';
+                }
+            } else
+                $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường 
+        }
+        $html_output .= '</b>';
         if (strlen($tu_khong_hop_le) > 0) {
             $tu_khong_hop_le = "<pre> Các số " . $tu_khong_hop_le . "không đúng với kiểu " . $this->noi_dung_arr[$index_of_kieu] . ".</pre>";
             return $html_output . $tu_khong_hop_le;
@@ -949,21 +1059,23 @@ class NoiDungTin
 
     public function KiemTraSoXiu(int $index_of_kieu, int $start, int $end): string
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $tu_khong_hop_le = '';
         $arr_length = count($this->noi_dung_arr);
         for ($i = 0; $i < $arr_length; $i++) {
             if ($i >= $start && $i <= $end) {
-                if (NoiDungTin::DemSoKyTuCuaSo($this->noi_dung_arr[$i])==3)
+                if (NoiDungTin::DemSoKyTuCuaSo($this->noi_dung_arr[$i]) >=3)
                     $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường
                 else {
                     $html_output .= '<code>' . $this->noi_dung_arr[$i] . '</code> '; //thì tô sáng
                     $tu_khong_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
-            } else
+            } else{
                 $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường 
+            }
+                
         }
-        $html_output .= '</span>';
+        $html_output .= '</b>';
         if (strlen($tu_khong_hop_le) > 0) {
             $tu_khong_hop_le = "<pre> Các số " . $tu_khong_hop_le . "không đúng với kiểu " . $this->noi_dung_arr[$index_of_kieu] . ". </pre>";
             return $html_output . $tu_khong_hop_le;
@@ -972,7 +1084,7 @@ class NoiDungTin
     }
     public function KiemTraSoDa_SoLuong_SoChuSo($index_of_kieu, $start, $end)
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $tu_khong_hop_le = "";
         $err_type = 0;
         // Duyệt các từ
@@ -1009,7 +1121,7 @@ class NoiDungTin
                 $html_output .= $item . " ";
             }
         }
-        $html_output .= "</span>";
+        $html_output .= "</b>";
         if (empty($tu_khong_hop_le))
             return "";
         if ($err_type == 1) {
@@ -1043,7 +1155,7 @@ class NoiDungTin
             }
         }
 
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
 
         // Duyệt các từ
         for ($i = 0; $i < count($this->noi_dung_arr); $i++) {
@@ -1056,7 +1168,7 @@ class NoiDungTin
                 $html_output .= $item . " "; // Thêm bình thường
 
         }
-        $html_output .= "</span>";
+        $html_output .= "</b>";
         if ($cung_so_chu_so == false) {
             $tu_khong_hop_le =
                 "<pre> Phải cùng 2 hoặc 4 chữ số để có thể đá!</pre>";
@@ -1091,7 +1203,7 @@ class NoiDungTin
 
         }
 
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
 
         // Duyệt các từ
         for ($i = 0; $i < count($this->noi_dung_arr); $i++) {
@@ -1104,7 +1216,7 @@ class NoiDungTin
                 $html_output .= $item . " "; // Thêm bình thường
 
         }
-        $html_output .= "</span>";
+        $html_output .= "</b>";
         if ($trung_nhau == true) {
             $tu_khong_hop_le =
                 "<pre> Các số phải không trùng nhau để có thể đá! </pre>";
@@ -1116,7 +1228,7 @@ class NoiDungTin
 
     public function KiemTraSoBao(int $index_of_kieu, int $start, int $end): string
     {
-        $html_output = "<span class='tg-spoiler'>";
+        $html_output = "<b>";
         $tu_khong_hop_le = '';
         $arr_length = count($this->noi_dung_arr);
         for ($i = 0; $i < $arr_length; $i++) {
@@ -1131,7 +1243,7 @@ class NoiDungTin
             } else
                 $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường 
         }
-        $html_output .= '</span>';
+        $html_output .= '</b>';
         if (strlen($tu_khong_hop_le) > 0) {
             $tu_khong_hop_le = "<pre> Kieu 'blo' chi cho phep 2, 3 hoac 4 chu so </pre>";
             return $html_output . $tu_khong_hop_le;
@@ -1204,8 +1316,15 @@ class NoiDungTin
     static function LaySoCuaSoKeo(string $so, &$so_ben_trai = null, &$so_ben_phai = null){
         $so = str_replace('keo', 'k', $so);
         $sos = explode('k', $so);
-        $so_ben_trai = $sos[0];
-        $so_ben_phai = $sos[1];
+        
+        if(isset($sos[0])){
+            $so_ben_trai = $sos[0];
+        }
+
+        if (isset($sos[1])){
+            $so_ben_phai = $sos[1];
+        }
+        
     } 
 }
 
