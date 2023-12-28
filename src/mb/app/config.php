@@ -1,10 +1,10 @@
 <?php 
     class db_info{
-        public const MAY_CHU = "172.28.0.1";
+        public const MAY_CHU = "159.65.129.60";
         //public const MAY_CHU = '213.136.93.171'; //contabo
         public const TAI_KHOAN = "root";
-        public const MAT_KHAU = "50612596";
-        public const TEN_CSDL = "db_so";
+        public const MAT_KHAU = "4Jmnidyl@bot";
+        public const TEN_CSDL = "bot_loto";
         //ki11996499_
     }
     class TrangThaiTaiKhoan{
