@@ -691,7 +691,7 @@ class NoiDungTin
 
             return $ket_qua_kiem_tra;
         }
-        if (($ket_qua_kiem_tra = $this->KiemTraDiemCuaKieu()) != '') {
+        if (($ket_qua_kiem_tra = $this->KiemTraDiemCuaKieu($ten_tai_khoan)) != '') {
 
             return $ket_qua_kiem_tra;
         }
@@ -922,15 +922,46 @@ class NoiDungTin
         return '';
     }
 
-    public function KiemTraDiemCuaKieu(): string
+    public function KiemTraDiemCuaKieu($ten_tai_khoan): string
     {
+
+        # lấy cài đặt kiểu
+        $sql_connector = new sql_connector();
+        # lấy danh sách số chặn
+        $sql_lay_limit_number = "SELECT * FROM `max_price` WHERE `tai_khoan_tao` = '$ten_tai_khoan' AND `vung_mien` ='mb' AND `dai_limit` IS NULL AND `number_limit` IS NOT NULL";      
+
+        
+        $lst_number_limit =[];
+
+        if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
+            while ($row = $limit_number->fetch_assoc()) {
+
+                $lst_number_limit[] = $row['number_limit'];
+            }
+        }
+
         $size = count($this->noi_dung_arr);
-        $html_tin = "<b>";
+        $html_tin = "<span class='tg-spoiler'>";
         $tu_ko_hop_le = '';
+        $vuot_han_muc = '';
+        $ket_qua = '';
         for ($i = 0; $i < $size; $i++) {
             if ($this->laKieu($i)) {
                 if ($this->laDiem($i + 1)) { //hop le
-                    $html_tin .= $this->noi_dung_arr[$i] . ' ';
+
+                    # kiểm tra nếu là điểm thì check xem có vượt hạn mức không
+                   
+                    if (in_array($this->noi_dung_arr[$i+1], $lst_number_limit)){
+
+                        $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                        $vuot_han_muc .= $this->noi_dung_arr[$i+1] . ', ';
+
+                    }else{
+
+                        $html_tin .= $this->noi_dung_arr[$i] . ' ';
+
+                    }
+
                 } else {
                     //4 dai ma ko phai thu 7 thi ko hop le
                     $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
@@ -939,13 +970,25 @@ class NoiDungTin
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</b>';
+
+       
+
+        $html_tin .= '</span>';
         if (strlen($tu_ko_hop_le) > 0) {
             $tu_ko_hop_le = "<pre> Lỗi cú pháp: Không nhận diện được điểm đánh của kiểu " . $tu_ko_hop_le . " có thể điểm đánh không đúng </pre>";
+            $vuot_han_muc = "<pre> Lỗi cú pháp: Điểm đã vượt quá hạn mức " . $vuot_han_muc . "</pre>";
             $ket_qua = $html_tin . $tu_ko_hop_le;
-            return $ket_qua;
+           
         }
-        return '';
+
+        if (strlen($vuot_han_muc) > 0) {
+            
+            $vuot_han_muc = "<pre> Lỗi cú pháp: Điểm đã vượt quá hạn mức " . $vuot_han_muc . "</pre>";
+            $ket_qua = $html_tin .$vuot_han_muc;
+           
+        }
+
+        return $ket_qua;
     }
 
     public function TinBatDauBangDai()
