@@ -880,15 +880,15 @@ class tin
 
     }
 
-    public static function GhiTinVaChiTiet(tin $tin, array $ds_chi_tiet, $vung_mien='mb')
+    public static function GhiTinVaChiTiet(tin $tin, array $ds_chi_tiet, $vung_mien, $message_id)
     {
         $conn = new sql_connector();
         //$success = false;
         if (!$conn->get_connect_error()) {
             $sql = "INSERT INTO tin (ma_tin, tai_khoan_tao, tai_khoan_danh, thoi_gian_tao, thoi_gian_danh, noi_dung, ghi_chu,
-        hai_c, ba_c, bon_c, da_daxien, xac, thuc_thu, tien_trung, so_trung, trang_thai, vung_mien)
+        hai_c, ba_c, bon_c, da_daxien, xac, thuc_thu, tien_trung, so_trung, trang_thai, vung_mien, message_id)
         VALUES ('$tin->ma_tin','$tin->tai_khoan_tao','$tin->tai_khoan_danh', '$tin->thoi_gian_tao', '$tin->thoi_gian_danh', '$tin->noi_dung','$tin->ghi_chu',
-        $tin->hai_c,$tin->ba_c, $tin->bon_c, $tin->da_daxien, $tin->xac, $tin->thuc_thu, $tin->tien_trung, '$tin->so_trung', $tin->trang_thai, '$vung_mien')";
+        $tin->hai_c,$tin->ba_c, $tin->bon_c, $tin->da_daxien, $tin->xac, $tin->thuc_thu, $tin->tien_trung, '$tin->so_trung', $tin->trang_thai, '$vung_mien', '$message_id')";
             //echo "sql1: " . $sql . "</br>";
             //echo $sql . "<br/>";
             if ($conn->get_query_result($sql)) {
