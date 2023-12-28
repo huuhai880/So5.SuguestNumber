@@ -207,4 +207,42 @@ if ($_POST["action"] === "cai_dat_han_muc") {
 }
 
 
+if ($_POST["action"] === "xoa_tin") {
+
+    $response['log'] .= "action=xoa_tin;";
+
+    if (!isset($_POST["message_id"]) ) {
+        //Nếu chưa có thông tin thì thoát
+        $response['log'] .= "không có message_id";
+        $response['success'] = 0;
+        echo json_encode($response);
+        exit();
+    }
+
+    $message_id = $_POST["message_id"];
+    $ten_tai_khoan = $_POST["ten_tai_khoan"];
+    
+    
+    $sql_connector = new sql_connector();
+
+    if(!$sql_connector->conn){ //Nếu có lỗi kết nối csdl
+        $response['log'] .= "Loi ket noi csdl; ";
+        $response['error'] = $sql_connector->get_connect_error();
+        $response['success'] = 0;
+        echo json_encode($response);
+        exit();
+    }
+
+    $sql_select = "DELETE FROM `tin` WHERE message_id = '$message_id' AND tai_khoan_danh ='$ten_tai_khoan' ";
+
+    if ($sql_connector->get_query_result($sql_select)){
+
+        $response['success'] = 1;
+
+        echo json_encode($response);
+        
+    }    
+}
+
+
 ?>

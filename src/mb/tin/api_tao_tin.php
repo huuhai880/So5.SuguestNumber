@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tin_moi->thoi_gian_tao = date('Y-m-d H:i:s');
     $action = $_POST["action"];
     $vung_mien = $_POST["vung_mien"];
+    $message_id = $_POST['message_id'];
     //Tin quá dài
     if (strlen($tin_moi->noi_dung) > 4990) {
         echo 'Tin quá dài';
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo json_encode($response);
 
             } else { //ghi mới
-                $kq_ghi = tin::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet, $vung_mien);
+                $kq_ghi = tin::GhiTinVaChiTiet($tin_moi, $ds_chi_tiet, $vung_mien, $message_id);
                 //Ghi Tin và các chi tiết xuống csdl
                 if ($kq_ghi) {
                     $thong_bao = "Lưu thành công!";
