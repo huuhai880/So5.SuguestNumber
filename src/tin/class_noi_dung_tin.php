@@ -178,6 +178,7 @@ class NoiDungTin
                 $chi_tiet_boc_tach->kieu = $kieu_viet_tat;
                 //Đài, chuẩn hoá về viết tắt
                 $vi_tri_dai_cua_kieu = $this->LayViTriDaiCuaKieu($i); //Đài
+                
                 if (preg_match("/1d|2d|3d|4d|1dai|2dai|3dai|4dai/", $this->noi_dung_arr[$vi_tri_dai_cua_kieu]))
                     $chi_tiet_boc_tach->dai = $this->noi_dung_arr[$vi_tri_dai_cua_kieu];
                 else
