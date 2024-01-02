@@ -10,14 +10,3 @@ services:
     working_dir: /var/www/html
     ports:
       - 9000:80
-    
-  mysql_db:
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_ROOT_PASSWORD: '50612596'
-      MYSQL_DATABASE: db_so
-      MYSQL_USER: admin_sql
-      MYSQL_PASSWORD: root@123
-    ports:
-      - "3306:3306"
