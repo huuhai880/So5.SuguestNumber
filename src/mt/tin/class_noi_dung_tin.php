@@ -948,7 +948,7 @@ class NoiDungTin
 
                     # kiểm tra nếu là điểm thì check xem có vượt hạn mức không
                    
-                    $_diem = $this->noi_dung_arr[$i+1]
+                    $_diem = $this->noi_dung_arr[$i+1];
 
                     $sql_lay_limit_number = "SELECT * FROM `max_price` WHERE (`number_limit` >= '$_diem' OR `number_limit` <= '$_diem') AND  `tai_khoan_tao` = '$ten_tai_khoan' AND `vung_mien` ='mt' AND `dai_limit` IS NULL AND `number_limit` IS NOT NULL";      
 
