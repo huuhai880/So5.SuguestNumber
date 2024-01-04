@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //Kiểm tra phương thức POST
 
 	//Lấy các giá trị gửi lên từ request
 	$ten_tai_khoan = $_POST['ten_tai_khoan'];
-	$loai_tai_khoan = $_POST['loai_tai_khoan'];
+	$loai_tai_khoan = 'std';
 	$tai_khoan_quan_ly = 'admin';
 	$ten_hien_thi = $_POST["ten_hien_thi"];
 	$mat_khau_mac_dinh = "123";
@@ -39,14 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //Kiểm tra phương thức POST
 		$sql = "INSERT INTO tai_khoan (ten_tai_khoan, mat_khau, loai_tai_khoan, tai_khoan_quan_ly, trang_thai, ten_hien_thi)
 			VALUES ('$ten_tai_khoan', '$mat_khau_mac_dinh', '$loai_tai_khoan', '$tai_khoan_quan_ly', '0', '$ten_hien_thi')";
 		$response['sql'] = $sql;
+
 		if ($result = $sql_connector->get_query_result($sql)) {
 			$response["success"] = 1;
-			if ($loai_tai_khoan != "god") //Nếu là tài khoản quản lý thì cần tạo cấu hình.
-			{
-				$cau_hinh = cau_hinh::LayCauHinh($tai_khoan_quan_ly); //La
-				$cau_hinh->tai_khoan = $ten_tai_khoan; //Cập nhật tên tài khoản mới
-				$cau_hinh->ghi_xuong_db(); //Ghi lại xuống csdl
-			}
+
+			$cau_hinh = cau_hinh::LayCauHinh($tai_khoan_quan_ly); //La
+			
+			$cau_hinh->tai_khoan = $ten_tai_khoan; //Cập nhật tên tài khoản mới
+			$cau_hinh->ghi_xuong_db(); //Ghi lại xuống csdl
 		} 
 		else
 			$response["success"] = 0;

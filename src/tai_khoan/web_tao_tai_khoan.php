@@ -10,6 +10,7 @@ $ds_chi_tiet_cau_hinh = []; // khởi tạo mảng các đối tượng
 $ds_thu_tu_dai = [];
 //Nếu là POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     $chi_tiet_s = $_POST['chi_tiet']; // lấy dữ liệu từ $_POST, chi_tiet ở dạng mảng
     $thu_dai_s = $_POST['thu_dai']; // lấy dữ liệu từ $_POST, thu_dai ở dạng mảng
     $tai_khoan_moi = $_POST['tk_can_tao'];
@@ -92,11 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
 }
-if (isset($_GET["user"])) {
-    $ten_tai_khoan = $_GET["user"];
-}
-else
-    $ten_tai_khoan = $_SESSION["username"];
+
+$ten_tai_khoan = 'admin';
 
 $cau_hinh = cau_hinh::LayCauHinh($ten_tai_khoan);
 
