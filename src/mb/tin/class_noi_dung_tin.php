@@ -895,15 +895,20 @@ class NoiDungTin
 
         # lấy cài đặt kiểu
         $sql_connector = new sql_connector();
-        # lấy danh sách số chặn
-        $sql_lay_limit_number = "SELECT MIN(`number_limit`) AS min_number_limit
+
+        # lấy danh sách số chặn theo miền
+        $sql_lay_limit_number = "SELECT MIN(`diem_chan`) AS min_number_limit
         FROM `max_price`
         WHERE `tai_khoan_tao` = '$ten_tai_khoan'
-          AND `vung_mien` = 'mb'
-          AND `dai_limit` IS NULL
-          AND `number_limit` IS NOT NULL;";
+        AND `vung_mien` = 'mb' AND `dai_limit` IS NULL AND `kieu_so` IS NULL
+        AND `number_limit` IS NULL;";
 
         $lst_number_limit = 0;
+        $dai_limit = 0;
+        $kieu_limit = 0;
+        $diem_limit = 0;
+
+
 
         if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
             while ($row = $limit_number->fetch_assoc()) {
@@ -911,8 +916,7 @@ class NoiDungTin
                 $lst_number_limit = $row['min_number_limit'];
             }
         }
-        
-
+ 
         $size = count($this->noi_dung_arr);
         $html_tin = "<span class='tg-spoiler'>";
         $tu_ko_hop_le = '';
@@ -920,11 +924,12 @@ class NoiDungTin
         $ket_qua = '';
         for ($i = 0; $i < $size; $i++) {
             if ($this->laKieu($i)) {
+                
                 if ($this->laDiem($i + 1)) { //hop le
 
                     # kiểm tra nếu là điểm thì check xem có vượt hạn mức không
 
-                    if ($lst_number_limit > 0 && $this->noi_dung_arr[$i+1] >= $lst_number_limit) {
+                    if ($lst_number_limit > 0 && $this->noi_dung_arr[$i+1] > $lst_number_limit) {
                         $html_tin .= '<code>' . $this->noi_dung_arr[$i] . '</code>';
                         $vuot_han_muc .= $lst_number_limit . ', ';
                     } else {

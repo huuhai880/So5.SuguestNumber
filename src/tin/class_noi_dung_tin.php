@@ -186,15 +186,23 @@ class NoiDungTin
 
                 //Số
                 $chi_tiet_boc_tach->so = $this->LaySoCuaKieu($i); //Số
+
                 //Điểm, chuẩn hoá về dấu . thay cho dấu, để đúng định dạng kiểu số thực
                 $vi_tri_diem_cua_kieu = $this->LayViTriDiemCuaKieu($i); //Điểm
-                $chi_tiet_boc_tach->diem = str_replace(',', '.', $this->noi_dung_arr[$vi_tri_diem_cua_kieu]);
 
+            
+                if(isset($this->noi_dung_arr[$vi_tri_diem_cua_kieu])){
+                    $chi_tiet_boc_tach->diem = str_replace(',', '.', $this->noi_dung_arr[$vi_tri_diem_cua_kieu]);
+                }
+                
                 $ket_qua[] = $chi_tiet_boc_tach;
             }
         }
-        $ket_qua = NoiDungTin::TachTinTheoSoCon($ket_qua);
-        $ket_qua = NoiDungTin::ChuanHoaSoTheoKieu($ket_qua);
+
+        // $ket_qua = NoiDungTin::TachTinTheoSoCon($ket_qua);
+
+        // $ket_qua = NoiDungTin::ChuanHoaSoTheoKieu($ket_qua);
+
         $ket_qua = NoiDungTin::Doi2D3DThanhTenDai($ket_qua, $ds_dai_viettat_theothutu);
         $ket_qua = NoiDungTin::DoiChanhPhuThanhTenDai($ket_qua, $ds_dai_viettat_theothutu);
         $ket_qua = NoiDungTin::TachTinTheoSoLuongDai($ket_qua);
@@ -298,10 +306,14 @@ class NoiDungTin
         if ($index_of_kieu <= 0 || $index_of_kieu >= count($this->noi_dung_arr))
             return $result; //Không hợp lệ, return empty array
 
-        $i = $index_of_kieu - 1;
+        $i = $index_of_kieu-1;
+
         while ($i > 0) {
+            
             if ($this->laSo($i)) {
+
                 $result[] = $this->noi_dung_arr[$i];
+
             } else {
                 if (count($result) > 0)
                     return array_reverse($result);
@@ -335,9 +347,15 @@ class NoiDungTin
     {
         if ($index_of_kieu < 2 || $index_of_kieu >= count($this->noi_dung_arr) - 1)
             return -1; //Không hợp lệ
-
-        if (preg_match('/^[0-9]+([,][0-9]+)?$/', $this->noi_dung_arr[$index_of_kieu + 1]))
-            return $index_of_kieu + 1;
+        
+        for ($i = $index_of_kieu; $i < count($this->noi_dung_arr); $i++) {
+            
+            if (preg_match('/^[0-9]+([,][0-9]+)?$/', $this->noi_dung_arr[$i])){
+                return $i;
+            }
+            
+        }
+        
         return -1;
     }
 
