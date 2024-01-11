@@ -3,6 +3,8 @@ $dir_name = dirname(__FILE__);
 require_once(dirname($dir_name) . '/app/class_sql_connector.php');
 include_once(dirname($dir_name) . '/tin/class_tin.php');
 include_once(dirname($dir_name) . '/tin/class_noi_dung_tin.php');
+include_once(dirname($dir_name) . '/tin/kiem_tra_so_chan.php');
+
 
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -233,6 +235,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
         }
+
+
+        # sau khi kiem tra điểm xong thì kiểm tra số chặn
+
+
+        $check_so_chan = new kiem_tra_so_chan();
+
+        $result_so_chan = kiem_tra_so_chan::kiem_tra_so_chan_tin($ds_chi_tiet, $tin_moi->tai_khoan_danh);
 
         $result = tin::CapNhatThongKeChoTin($tin_moi, $ds_chi_tiet);
 
