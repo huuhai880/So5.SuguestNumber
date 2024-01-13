@@ -4,6 +4,7 @@ require_once(dirname($dir_name) . '/app/class_sql_connector.php');
 include_once(dirname($dir_name) . '/tin/class_tin.php');
 include_once(dirname($dir_name) . '/tin/class_noi_dung_tin.php');
 include_once(dirname($dir_name) . '/tin/kiem_tra_so_chan.php');
+include_once(dirname($dir_name) . '/tin/kiem_tra_tang_diem.php');
 
 
 
