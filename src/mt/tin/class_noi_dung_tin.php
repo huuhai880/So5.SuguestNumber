@@ -715,27 +715,17 @@ class NoiDungTin
      */
     public function KiemTraSoCuaKieu($ten_tai_khoan)
     {   
-        # lấy cài đặt kiểu
         $sql_connector = new sql_connector();
+        # lấy danh sách số chặn
+        $sql_lay_limit_number = "SELECT * FROM `limit_number` WHERE `tai_khoan_tao` = '$ten_tai_khoan' AND `vung_mien` ='mt' AND `dai_limit` IS NULL AND `number_limit` IS NOT NULL";      
 
-        # lấy danh sách số chặn theo miền
-        $sql_lay_limit_number = "SELECT MIN(`diem_chan`) AS min_number_limit
-        FROM `max_price`
-        WHERE `tai_khoan_tao` = '$ten_tai_khoan'
-        AND `vung_mien` = 'mt' AND `dai_limit` IS NULL AND `kieu_so` IS NULL
-        AND `number_limit` IS NULL;";
-
-        $lst_number_limit = 0;
-        $dai_limit = 0;
-        $kieu_limit = 0;
-        $diem_limit = 0;
-
-
+        
+        $lst_number_limit =[];
 
         if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
             while ($row = $limit_number->fetch_assoc()) {
 
-                $lst_number_limit = $row['min_number_limit'];
+                $lst_number_limit[] = $row['number_limit'];
             }
         }
 
@@ -760,11 +750,11 @@ class NoiDungTin
                 #kiểm tra số chặn
                 
                 $check_so_chan = $this->KiemTraSoChan($i, $start, $end, $lst_number_limit);
-                
+            
                 if(empty($check_so_chan) == false){
                     return $check_so_chan;
                 }
-
+                
                 $vietTatKieu = $dsKieu->LayVietTatTheoCode($item);
                 $ket_qua = '';
                 switch ($vietTatKieu) { //Goi ham kiem tra so theo kieu

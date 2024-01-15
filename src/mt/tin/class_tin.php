@@ -2,6 +2,7 @@
 $dir_name = dirname(__FILE__);
 include_once(dirname($dir_name) . '/ket_qua/class_ket_qua.php');
 include_once(dirname($dir_name) . '/cau_hinh/class_cau_hinh.php');
+include_once(dirname($dir_name) . '/tin/kiem_tra_tang_diem.php');
 
 //================================================== Class tin ===============================================
 class tin
@@ -214,6 +215,12 @@ class tin
             $ket_qua_mien_trung = ket_qua_ngay::LayKetQuaMienTrung($day_of_week);
         }
 
+        $tang_diem = new kiem_tra_tang_diem();
+
+
+        $danh_sach_tang_diem = kiem_tra_tang_diem::kiem_tra_tang_diem($tin->tai_khoan_danh);
+
+
         $html_chi_tiet = '<style>table {width: 100%;} th,td {text-align: right;} td {vertical-align: top;} th:nth-child(1),td:nth-child(1) {text-align: left;}</style>
                         <table> 
                         <thead> <tr><th >Đài</th><th >Số</th><th >Kiểu</th><th >Điểm</th><th >Tiền</th></tr> </thead> 
@@ -232,7 +239,7 @@ class tin
             'dat' => new tin_thongke('dat'),
             'dax' => new tin_thongke('dax'),
         );
-
+        $result_diem_tang = '';
         //Kiểm tra từng chi tiết tin
         foreach ($ds_chi_tiet as $chi_tiet_tin) {
 
@@ -431,6 +438,11 @@ class tin
                 }
                 $html_chi_tiet .= $chi_tiet_tin->toHTML();
             }
+
+            #kiểm tra xem kiểu có điểm thay đổi trong ngày hay không
+            if(count($danh_sach_tang_diem) > 0){
+                $result_diem_tang .= kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr ) ."\n";
+            }
         }
 
         $html_thong_ke = tin_thongke::toHTMLFormArray($thong_ke);
@@ -459,6 +471,7 @@ class tin
         $result['ds_chi_tiet'] = $ds_chi_tiet;
         $result['ds_thong_ke'] = $thong_ke;
         $result['success'] = 1;
+        $result['result_diem_tang'] = $result_diem_tang;
         return $result;
     }
 
