@@ -2,6 +2,7 @@
 $dir_name = dirname(__FILE__);
 include_once(dirname($dir_name) . '/ket_qua/class_ket_qua.php');
 include_once(dirname($dir_name) . '/cau_hinh/class_cau_hinh.php');
+include_once(dirname($dir_name) . '/tin/kiem_tra_tang_diem.php');
 
 //================================================== Class tin ===============================================
 class tin
@@ -215,6 +216,14 @@ class tin
             $ket_qua_mien_bac = ket_qua_ngay::LayKetQuaMienBac($day_of_week);
         }
 
+        #lấy danh sách điểm tăng trong ngày
+
+        $tang_diem = new kiem_tra_tang_diem();
+
+
+        $danh_sach_tang_diem = kiem_tra_tang_diem::kiem_tra_tang_diem($tin->tai_khoan_danh);
+
+
         $html_chi_tiet = '<style>table {width: 100%;} th,td {text-align: right;} td {vertical-align: top;} th:nth-child(1),td:nth-child(1) {text-align: left;}</style>
                         <table> 
                         <thead> <tr><th >Đài</th><th >Số</th><th >Kiểu</th><th >Điểm</th><th >Tiền</th></tr> </thead> 
@@ -233,6 +242,9 @@ class tin
             'dat' => new tin_thongke('dat'),
             'dax' => new tin_thongke('dax'),
         );
+
+
+        $result_diem_tang = '';
 
         //Kiểm tra từng chi tiết tin
         foreach ($ds_chi_tiet as $chi_tiet_tin) {
@@ -253,6 +265,7 @@ class tin
                 $co = $chi_tiet_cau_hinh->co;
                 $trung = $chi_tiet_cau_hinh->trung;
 
+
                 $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
 
                 if ($chi_tiet_tin->kieu === 'dau')
@@ -262,9 +275,9 @@ class tin
                 $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
                 //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($chi_tiet_tin->kieu == "dau") ? $ket_qua_dai->HaiConDau($chi_tiet_tin, $trung) :
-                        $ket_qua_dai->HaiConDuoi($chi_tiet_tin, $trung);
+                // if ($da_co_ket_qua)
+                //     $chi_tiet_tin = ($chi_tiet_tin->kieu == "dau") ? $ket_qua_dai->HaiConDau($chi_tiet_tin, $trung) :
+                //         $ket_qua_dai->HaiConDuoi($chi_tiet_tin, $trung);
 
                 $thong_ke['2c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
                 $thong_ke['2c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
@@ -293,10 +306,10 @@ class tin
                 $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
                 $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($chi_tiet_tin->kieu == "xdau") ? $ket_qua_dai->XiuDau($chi_tiet_tin, $trung) :
-                        $ket_qua_dai->XiuDuoi($chi_tiet_tin, $trung);
+                // //Kiểm tra trúng trật
+                // if ($da_co_ket_qua)
+                //     $chi_tiet_tin = ($chi_tiet_tin->kieu == "xdau") ? $ket_qua_dai->XiuDau($chi_tiet_tin, $trung) :
+                //         $ket_qua_dai->XiuDuoi($chi_tiet_tin, $trung);
 
                 $thong_ke['3c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
                 $thong_ke['3c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
@@ -437,6 +450,11 @@ class tin
                 }
                 $html_chi_tiet .= $chi_tiet_tin->toHTML();
             }
+
+            #kiểm tra xem kiểu có điểm thay đổi trong ngày hay không
+            if(count($danh_sach_tang_diem) > 0){
+                $result_diem_tang .= kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr ) ."\n";
+            }
         }
 
 
@@ -466,7 +484,9 @@ class tin
         $result['tin'] = $tin;
         $result['ds_chi_tiet'] = $ds_chi_tiet;
         $result['ds_thong_ke'] = $thong_ke;
+        $result['result_diem_tang'] = $result_diem_tang;
         $result['success'] = 1;
+
         return $result;
     }
 
@@ -606,6 +626,8 @@ class tin
                 //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
                 $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "dau") ?
                     $cau_hinh->lay_chi_tiet_2d_dau($vung_mien) : $cau_hinh->lay_chi_tiet_2d_duoi($vung_mien);
+                
+                
                 $co = $chi_tiet_cau_hinh->co;
                 $trung = $chi_tiet_cau_hinh->trung;
 

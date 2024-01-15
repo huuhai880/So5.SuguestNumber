@@ -729,12 +729,14 @@ class NoiDungTin
                 } else {
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                 }
-
-                $check_so_chan = $this->KiemTraSoChan($i, $start, $end, $lst_number_limit);
                 
+                $check_so_chan = $this->KiemTraSoChan($i, $start, $end, $lst_number_limit);
+            
                 if(empty($check_so_chan) == false){
                     return $check_so_chan;
                 }
+                
+                
 
                 $vietTatKieu = $dsKieu->LayVietTatTheoCode($item);
                 $ket_qua = '';
@@ -907,8 +909,6 @@ class NoiDungTin
         $dai_limit = 0;
         $kieu_limit = 0;
         $diem_limit = 0;
-
-
 
         if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
             while ($row = $limit_number->fetch_assoc()) {

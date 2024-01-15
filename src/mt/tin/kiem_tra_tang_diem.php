@@ -12,7 +12,7 @@ class kiem_tra_tang_diem
          
         # lấy danh sách số chặn theo miền
         $sql_lay_limit_number = "SELECT * FROM `up_price` WHERE `tai_khoan_tao` = '$tai_khoan_danh'
-        AND CAST(`time_exp` AS DATE) = CAST(NOW() AS DATE) AND `vung_mien`='mb';";
+        AND CAST(`time_exp` AS DATE) = CAST(NOW() AS DATE) AND `vung_mien`='mt';";
 
 
         $danh_sach_chan_diem =[];
