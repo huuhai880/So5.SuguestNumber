@@ -217,10 +217,7 @@ class tin
         }
 
         #lấy danh sách điểm tăng trong ngày
-
         $tang_diem = new kiem_tra_tang_diem();
-
-
         $danh_sach_tang_diem = kiem_tra_tang_diem::kiem_tra_tang_diem($tin->tai_khoan_danh);
 
 
@@ -249,214 +246,265 @@ class tin
         //Kiểm tra từng chi tiết tin
         foreach ($ds_chi_tiet as $chi_tiet_tin) {
 
-            $so_arr = explode(' ', $chi_tiet_tin->so);
-            $so_luong_so = count($so_arr);
+            $lst_number = explode(' ', $chi_tiet_tin->so);
 
-            $vung_mien =  'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
-            if ($da_co_ket_qua)
-                $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0];
+            for($index_num = 0; $index_num < count($lst_number); $index_num++  ){
 
-            //--------Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi ---------------
-            if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
-
-                //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
-                $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "dau") ?
-                    $cau_hinh->lay_chi_tiet_2d_dau($vung_mien) : $cau_hinh->lay_chi_tiet_2d_duoi($vung_mien);
-                $co = $chi_tiet_cau_hinh->co;
-                $trung = $chi_tiet_cau_hinh->trung;
-
-
-                $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
-
-                if ($chi_tiet_tin->kieu === 'dau')
-                    $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 4; //Xác
+                $item_number = $lst_number[$index_num];
                 
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                $so_arr = explode(' ', $item_number);
+                $so_luong_so = count($so_arr);
 
-                //Kiểm tra trúng trật
-                // if ($da_co_ket_qua)
-                //     $chi_tiet_tin = ($chi_tiet_tin->kieu == "dau") ? $ket_qua_dai->HaiConDau($chi_tiet_tin, $trung) :
-                //         $ket_qua_dai->HaiConDuoi($chi_tiet_tin, $trung);
+                $vung_mien =  'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
+                if ($da_co_ket_qua)
+                    $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0];
 
-                $thong_ke['2c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['2c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
-                //Cập nhật trúng trật
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['2c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['2c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //Xỉu đầu xỉu đuôi
-            if ($chi_tiet_tin->kieu === "xdau" || $chi_tiet_tin->kieu === "xduoi") {
+                //--------Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi ---------------
+                if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
 
+                    //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
+                    $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "dau") ?
+                        $cau_hinh->lay_chi_tiet_2d_dau($vung_mien) : $cau_hinh->lay_chi_tiet_2d_duoi($vung_mien);
+                    $co = $chi_tiet_cau_hinh->co;
+                    $trung = $chi_tiet_cau_hinh->trung;
 
-                //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
-                $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "xdau") ?
-                    $cau_hinh->lay_chi_tiet_xiu_dau($vung_mien) : $cau_hinh->lay_chi_tiet_xiu_duoi($vung_mien);
-                $co = $chi_tiet_cau_hinh->co;
-                $trung = $chi_tiet_cau_hinh->trung;
+                    #kiểm tra xem kiểu có điểm thay đổi trong ngày hay không
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
+                        
+                    }
+                    
 
-                if ($chi_tiet_tin->kieu === 'xdau')
-                    $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 3; //Xác
-                else
                     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
 
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    if ($chi_tiet_tin->kieu === 'dau')
+                        $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 4; //Xác
+                    
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
-                // //Kiểm tra trúng trật
-                // if ($da_co_ket_qua)
-                //     $chi_tiet_tin = ($chi_tiet_tin->kieu == "xdau") ? $ket_qua_dai->XiuDau($chi_tiet_tin, $trung) :
-                //         $ket_qua_dai->XiuDuoi($chi_tiet_tin, $trung);
-
-                $thong_ke['3c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['3c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
-                //Cập nhật trúng trật
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['3c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['3c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //------------------Bao lô-------------------------------
-            if ($chi_tiet_tin->kieu === "blo") {
-                $so_lo_mien_bac = array(2 => 27, 3 => 23, 4 => 20); //Tính số lô để phục vụ cho kiểu Bao 2c, 3c, 4c
-                //Với bao lô, phải duyệt theo từng số, vì một chi tiết có thể có số 2c, 3c, 4c
-                $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
-
-                $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
-                $so_lo = $so_lo_mien_bac[$con]; //Tính số lô dựa vào con (số ký tự)
-
-                $chi_tiet_tin->xac += $so_lo * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_bao_lo($vung_mien, $con); //Lấy chi tiết cấu hình theo số con
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung; //trúng
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = $ket_qua_dai->Bao($chi_tiet_tin, $trung);
-                //Cập nhật trúng trật
-                if ($con == 2) {
-                    $thong_ke['2c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['2c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                    
+                    $thong_ke['2c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['2c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
+                    //Cập nhật trúng trật
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['2c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['2c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['2c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['2c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                if ($con == 3) {
-                    $thong_ke['3c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['3c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                //Xỉu đầu xỉu đuôi
+                if ($chi_tiet_tin->kieu === "xdau" || $chi_tiet_tin->kieu === "xduoi") {
+
+
+                    //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
+                    $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "xdau") ?
+                        $cau_hinh->lay_chi_tiet_xiu_dau($vung_mien) : $cau_hinh->lay_chi_tiet_xiu_duoi($vung_mien);
+                    $co = $chi_tiet_cau_hinh->co;
+                    $trung = $chi_tiet_cau_hinh->trung;
+
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
+
+                    }
+
+                    if ($chi_tiet_tin->kieu === 'xdau')
+                        $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 3; //Xác
+                    else
+                        $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
+
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+
+                    
+                    $thong_ke['3c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['3c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
+                    //Cập nhật trúng trật
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['3c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['3c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['3c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['3c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                if ($con == 4) {
-                    $thong_ke['4c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['4c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                //------------------Bao lô-------------------------------
+                if ($chi_tiet_tin->kieu === "blo") {
+                    $so_lo_mien_bac = array(2 => 27, 3 => 23, 4 => 20); //Tính số lô để phục vụ cho kiểu Bao 2c, 3c, 4c
+                    //Với bao lô, phải duyệt theo từng số, vì một chi tiết có thể có số 2c, 3c, 4c
+                    $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+
+                    $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
+                    $so_lo = $so_lo_mien_bac[$con]; //Tính số lô dựa vào con (số ký tự)
+
+                    $chi_tiet_tin->xac += $so_lo * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_bao_lo($vung_mien, $con); //Lấy chi tiết cấu hình theo số con
+                    $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung; //trúng
+
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
+
+                    }
+
+
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    
+
+                    //Cập nhật trúng trật
+                    if ($con == 2) {
+                        $thong_ke['2c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['2c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['2c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['2c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        }
+                    }
+                    if ($con == 3) {
+                        $thong_ke['3c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['3c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['3c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['3c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        }
+                    }
+                    if ($con == 4) {
+                        $thong_ke['4c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['4c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['4c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['4c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        }
+                    }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
+                }
+
+                //------------------Bảy lô-------------------------------
+                if ($chi_tiet_tin->kieu === "baylo") {
+                    $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+
+                    $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
+
+                    $chi_tiet_tin->xac = 7 * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
+                    $chi_tiet_cau_hinh = ($con == 2)? $cau_hinh->lay_chi_tiet_7lo_2con() : $cau_hinh->lay_chi_tiet_7lo_3con(); //Lấy chi tiết cấu hình theo số con
+                    $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung; //trúng
+
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
+
+                    }
+
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    
+
+                    //Cập nhật trúng trật
+                    if ($con == 2) {
+                        $thong_ke['2c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['2c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['2c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['2c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        }
+                    }
+                    if ($con == 3) {
+                        $thong_ke['3c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['3c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
+
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['3c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['3c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        }
+                    }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
+                }
+
+                //------------------ da -------------------------------
+                if ($chi_tiet_tin->kieu === "da") {
+                    //Cập nhật xác, tiền, thực thu
+
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da($vung_mien); //Lấy cấu hình, cò, trúng
+                    $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung;
+
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
+
+                    }
+                    
+                    $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
+
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+
+                    
+                    $thong_ke['dat']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['dat']->thuc_thu += $chi_tiet_tin->thuc_thu;
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['4c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['4c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['dat']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['dat']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
+                //------------------ da xiên -------------------------------
+                if ($chi_tiet_tin->kieu === "dx") {
+                    //Cập nhật xác, tiền, thực thu
 
-            //------------------Bảy lô-------------------------------
-            if ($chi_tiet_tin->kieu === "baylo") {
-                $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da_xien(); //Lấy cấu hình, cò, trúng
+                    $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung;
 
-                $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
-
-                $chi_tiet_tin->xac = 7 * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
-                $chi_tiet_cau_hinh = ($con == 2)? $cau_hinh->lay_chi_tiet_7lo_2con() : $cau_hinh->lay_chi_tiet_7lo_3con(); //Lấy chi tiết cấu hình theo số con
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung; //trúng
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($con == 2)? $ket_qua_dai->BayLo2con($chi_tiet_tin, $trung) : $ket_qua_dai->BayLo3con($chi_tiet_tin, $trung);
-                //Cập nhật trúng trật
-                if ($con == 2) {
-                    $thong_ke['2c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['2c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
-                    if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['2c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['2c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                    if(count($danh_sach_tang_diem) > 0){
+                        
+                        $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                        $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                        if($result_dt['diem_tang'] > 0){
+                            $co = $result_dt['diem_tang'];
+                        }
                     }
-                }
-                if ($con == 3) {
-                    $thong_ke['3c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['3c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
 
-                    if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['3c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['3c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                    }
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-
-            //------------------ da -------------------------------
-            if ($chi_tiet_tin->kieu === "da") {
-                //Cập nhật xác, tiền, thực thu
-
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da($vung_mien); //Lấy cấu hình, cò, trúng
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung;
+                    $chi_tiet_tin->xac = $chi_tiet_tin->diem * 72 * $so_luong_so; //Xác của tin
+                    $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
                 
-                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
-
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-
-                if ($da_co_ket_qua) //Cập nhật kết quả
-                    $chi_tiet_tin = $ket_qua_dai->Da($chi_tiet_tin, $trung);
-
-                $thong_ke['dat']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['dat']->thuc_thu += $chi_tiet_tin->thuc_thu;
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['dat']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['dat']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                    $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                    if ($chi_tiet_tin->tien_trung > 0) {
+                        $thong_ke['dax']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['dax']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                    }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //------------------ da xiên -------------------------------
-            if ($chi_tiet_tin->kieu === "dx") {
-                //Cập nhật xác, tiền, thực thu
 
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da_xien(); //Lấy cấu hình, cò, trúng
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung;
-
-                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 72 * $so_luong_so; //Xác của tin
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-
-                if ($da_co_ket_qua) //Cập nhật kết quả
-                    $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung);
-
-                $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['dax']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['dax']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
             }
 
-            #kiểm tra xem kiểu có điểm thay đổi trong ngày hay không
-            if(count($danh_sach_tang_diem) > 0){
-                $result_diem_tang .= kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr ) ."\n";
-            }
         }
-
 
 
         $html_thong_ke = tin_thongke::toHTMLFormArray($thong_ke);
@@ -537,12 +585,10 @@ class tin
 
             }else{
 
-                
                 foreach ($result as $key => $item1) {
                    
                     if (isset($result_thong_ke['ds_thong_ke'][$key])) {
                        
-                        
                         $result[$key]->kieu = $item1->kieu; // Assuming kieu remains the same
                         $result[$key]->xac = $item1->xac + $result_thong_ke['ds_thong_ke'][$key]->xac;
                         $result[$key]->diem_trung = $item1->diem_trung + $result_thong_ke['ds_thong_ke'][$key]->diem_trung;
@@ -587,9 +633,13 @@ class tin
         //Lấy kết quả theo ngày đánh
         $day_of_week = date('w', strtotime($tin->thoi_gian_danh));
         if ($da_co_ket_qua) {
-
             $ket_qua_mien_bac = ket_qua_ngay::LayKetQuaMienBac($day_of_week);
         }
+
+        #lấy danh sách điểm tăng trong ngày
+        $tang_diem = new kiem_tra_tang_diem();
+        $danh_sach_tang_diem = kiem_tra_tang_diem::kiem_tra_tang_diem($tin->tai_khoan_danh);
+
 
         $html_chi_tiet = '<style>table {width: 100%;} th,td {text-align: right;} td {vertical-align: top;} th:nth-child(1),td:nth-child(1) {text-align: left;}</style>
                         <table> 
@@ -610,220 +660,288 @@ class tin
             'dax' => new tin_thongke('dax'),
         );
 
+        $result_diem_tang = '';
+
         //Kiểm tra từng chi tiết tin
         foreach ($ds_chi_tiet as $chi_tiet_tin) {
 
-            $so_arr = explode(' ', $chi_tiet_tin->so);
-            $so_luong_so = count($so_arr);
+            $lst_number = explode(' ', $chi_tiet_tin->so);
 
-            $vung_mien =  'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
-            if ($da_co_ket_qua)
-                $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0];
+            for($index_num = 0; $index_num < count($lst_number); $index_num++  ){
 
-            //--------Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi ---------------
-            if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
+                $item_number = $lst_number[$index_num];
 
-                //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
-                $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "dau") ?
-                    $cau_hinh->lay_chi_tiet_2d_dau($vung_mien) : $cau_hinh->lay_chi_tiet_2d_duoi($vung_mien);
-                
-                
-                $co = $chi_tiet_cau_hinh->co;
-                $trung = $chi_tiet_cau_hinh->trung;
+                # bắt đầu kiểm tra và tính toán tiền
+                $so_arr = explode(' ', $item_number);
+                $so_luong_so = count($so_arr);
 
-                $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
-
-                if ($chi_tiet_tin->kieu === 'dau')
-                    $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 4; //Xác
-                
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-
-                //Kiểm tra trúng trật
+                $vung_mien =  'Miền Bắc'; //Lấy vùng miền và lấy kết quả đài của từng chi tiết theo vùng miền
                 if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($chi_tiet_tin->kieu == "dau") ? $ket_qua_dai->HaiConDau($chi_tiet_tin, $trung) :
-                        $ket_qua_dai->HaiConDuoi($chi_tiet_tin, $trung);
+                    $ket_qua_dai = $ket_qua_mien_bac->ket_qua_cac_dai[0];
 
-                $thong_ke['2c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['2c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
-                //Cập nhật trúng trật
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['2c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['2c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                    $thong_ke['2c-dd']->diem_trung += $chi_tiet_tin->diem;
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //Xỉu đầu xỉu đuôi
-            if ($chi_tiet_tin->kieu === "xdau" || $chi_tiet_tin->kieu === "xduoi") {
+                //--------Dựa theo kiểu đánh, nếu kiểu đánh là đầu hoặc đuôi ---------------
+                if ($chi_tiet_tin->kieu === "dau" || $chi_tiet_tin->kieu === "duoi") {
 
+                    //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
+                    $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "dau") ?
+                        $cau_hinh->lay_chi_tiet_2d_dau($vung_mien) : $cau_hinh->lay_chi_tiet_2d_duoi($vung_mien);
+                    
+                    // $co = $chi_tiet_cau_hinh->co;
+                    $trung = $chi_tiet_cau_hinh->trung;
 
-                //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
-                $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "xdau") ?
-                    $cau_hinh->lay_chi_tiet_xiu_dau($vung_mien) : $cau_hinh->lay_chi_tiet_xiu_duoi($vung_mien);
-                $co = $chi_tiet_cau_hinh->co;
-                $trung = $chi_tiet_cau_hinh->trung;
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
 
-                if ($chi_tiet_tin->kieu === 'xdau')
-                    $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 3; //Xác
-                else
-                    $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
+                    // $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
 
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    // if ($chi_tiet_tin->kieu === 'dau')
+                    //     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 4; //Xác
+                    
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
 
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($chi_tiet_tin->kieu == "xdau") ? $ket_qua_dai->XiuDau($chi_tiet_tin, $trung) :
-                        $ket_qua_dai->XiuDuoi($chi_tiet_tin, $trung);
+                    //Kiểm tra trúng trật
+                    if ($da_co_ket_qua)
+                        $chi_tiet_tin = ($chi_tiet_tin->kieu == "dau") ? $ket_qua_dai->HaiConDau($chi_tiet_tin, $trung, $so_arr) :
+                            $ket_qua_dai->HaiConDuoi($chi_tiet_tin, $trung, $so_arr);
 
-                $thong_ke['3c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['3c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
-                //Cập nhật trúng trật
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['3c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['3c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                    $thong_ke['3c-dd']->diem_trung += $chi_tiet_tin->diem;
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //------------------Bao lô-------------------------------
-            if ($chi_tiet_tin->kieu === "blo") {
-                $so_lo_mien_bac = array(2 => 27, 3 => 23, 4 => 20); //Tính số lô để phục vụ cho kiểu Bao 2c, 3c, 4c
-                //Với bao lô, phải duyệt theo từng số, vì một chi tiết có thể có số 2c, 3c, 4c
-                $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
-
-                $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
-                $so_lo = $so_lo_mien_bac[$con]; //Tính số lô dựa vào con (số ký tự)
-
-                $chi_tiet_tin->xac += $so_lo * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_bao_lo($vung_mien, $con); //Lấy chi tiết cấu hình theo số con
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung; //trúng
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = $ket_qua_dai->Bao($chi_tiet_tin, $trung);
-                //Cập nhật trúng trật
-                if ($con == 2) {
-                    $thong_ke['2c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['2c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                    $thong_ke['2c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['2c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
+                    //Cập nhật trúng trật
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['2c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['2c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                        $thong_ke['2c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        $thong_ke['2c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['2c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['2c-dd']->diem_trung += $chi_tiet_tin->diem;
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                if ($con == 3) {
-                    $thong_ke['3c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['3c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                //Xỉu đầu xỉu đuôi
+                if ($chi_tiet_tin->kieu === "xdau" || $chi_tiet_tin->kieu === "xduoi") {
+
+
+                    //Lấy cò trúng tương ứng với kiểu đánh đầu hay đuôi
+                    $chi_tiet_cau_hinh = ($chi_tiet_tin->kieu == "xdau") ?
+                        $cau_hinh->lay_chi_tiet_xiu_dau($vung_mien) : $cau_hinh->lay_chi_tiet_xiu_duoi($vung_mien);
+                    // $co = $chi_tiet_cau_hinh->co;
+                    $trung = $chi_tiet_cau_hinh->trung;
+
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
+
+                    // if ($chi_tiet_tin->kieu === 'xdau')
+                    //     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem * 3; //Xác
+                    // else
+                    //     $chi_tiet_tin->xac = $so_luong_so * $chi_tiet_tin->diem; //Xác
+
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+
+                    //Kiểm tra trúng trật
+                    if ($da_co_ket_qua)
+                        $chi_tiet_tin = ($chi_tiet_tin->kieu == "xdau") ? $ket_qua_dai->XiuDau($chi_tiet_tin, $trung, $so_arr) :
+                            $ket_qua_dai->XiuDuoi($chi_tiet_tin, $trung, $so_arr);
+
+                    $thong_ke['3c-dd']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['3c-dd']->thuc_thu += $chi_tiet_tin->thuc_thu; //Cập nhật thực thu
+                    //Cập nhật trúng trật
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['3c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['3c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                        $thong_ke['3c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        $thong_ke['3c-dd']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['3c-dd']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['3c-dd']->diem_trung += $chi_tiet_tin->diem;
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                if ($con == 4) {
-                    $thong_ke['4c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['4c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                //------------------Bao lô-------------------------------
+                if ($chi_tiet_tin->kieu === "blo") {
+                    $so_lo_mien_bac = array(2 => 27, 3 => 23, 4 => 20); //Tính số lô để phục vụ cho kiểu Bao 2c, 3c, 4c
+                    //Với bao lô, phải duyệt theo từng số, vì một chi tiết có thể có số 2c, 3c, 4c
+                    $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+
+                    $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
+                    // $so_lo = $so_lo_mien_bac[$con]; //Tính số lô dựa vào con (số ký tự)
+
+                    // $chi_tiet_tin->xac += $so_lo * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
+                    
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_bao_lo($vung_mien, $con); //Lấy chi tiết cấu hình theo số con
+                    // $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung; //trúng
+
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
+
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    //Kiểm tra trúng trật
+                    if ($da_co_ket_qua)
+                        $chi_tiet_tin = $ket_qua_dai->Bao($chi_tiet_tin, $trung, $so_arr);
+                    //Cập nhật trúng trật
+                    if ($con == 2) {
+                        $thong_ke['2c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['2c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['2c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['2c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                            $thong_ke['2c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        }
+                    }
+                    if ($con == 3) {
+                        $thong_ke['3c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['3c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['3c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['3c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                            $thong_ke['3c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        }
+                    }
+                    if ($con == 4) {
+                        $thong_ke['4c-bl']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['4c-bl']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['4c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['4c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                            $thong_ke['4c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        }
+                    }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
+                }
+
+                //------------------Bảy lô-------------------------------
+                if ($chi_tiet_tin->kieu === "baylo") {
+                    // $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+
+                    $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
+
+                    // $chi_tiet_tin->xac = 7 * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
+                    $chi_tiet_cau_hinh = ($con == 2)? $cau_hinh->lay_chi_tiet_7lo_2con() : $cau_hinh->lay_chi_tiet_7lo_3con(); //Lấy chi tiết cấu hình theo số con
+                    // $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung; //trúng
+
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
+
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+                    //Kiểm tra trúng trật
+                    if ($da_co_ket_qua)
+                        $chi_tiet_tin = ($con == 2)? $ket_qua_dai->BayLo2con($chi_tiet_tin, $trung, $so_arr) : $ket_qua_dai->BayLo3con($chi_tiet_tin, $trung, $so_arr);
+                    //Cập nhật trúng trật
+                    if ($con == 2) {
+                        $thong_ke['2c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['2c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['2c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['2c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                            $thong_ke['2c-baylo']->diem_trung += $chi_tiet_tin->diem;
+                        }
+                    }
+                    if ($con == 3) {
+                        $thong_ke['3c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                        $thong_ke['3c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
+
+                        if ($chi_tiet_tin->tien_trung > 0) {
+                            $thong_ke['3c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
+                            $thong_ke['3c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                            $thong_ke['3c-baylo']->diem_trung += $chi_tiet_tin->diem;
+                        }
+                    }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
+                }
+
+                //------------------ da -------------------------------
+                if ($chi_tiet_tin->kieu === "da") {
+                    //Cập nhật xác, tiền, thực thu
+
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da($vung_mien); //Lấy cấu hình, cò, trúng
+                    // $co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung;
+
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
+
+                    
+                    // $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
+
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+
+                    if ($da_co_ket_qua) //Cập nhật kết quả
+                        $chi_tiet_tin = $ket_qua_dai->Da($chi_tiet_tin, $trung, $so_arr);
+
+                    $thong_ke['dat']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['dat']->thuc_thu += $chi_tiet_tin->thuc_thu;
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['4c-bl']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['4c-bl']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                        $thong_ke['4c-bl']->diem_trung += $chi_tiet_tin->diem;
+                        $thong_ke['dat']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['dat']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['dat']->diem_trung += $chi_tiet_tin->diem;
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
+                //------------------ da xiên -------------------------------
+                if ($chi_tiet_tin->kieu === "dx") {
+                    //Cập nhật xác, tiền, thực thu
 
-            //------------------Bảy lô-------------------------------
-            if ($chi_tiet_tin->kieu === "baylo") {
-                $chi_tiet_tin->xac = $chi_tiet_tin->tien = $chi_tiet_tin->thuc_thu = 0.0;
+                    $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da_xien(); //Lấy cấu hình, cò, trúng
+                    //$co = $chi_tiet_cau_hinh->co; //cò
+                    $trung = $chi_tiet_cau_hinh->trung;
 
-                $con = strlen($so_arr[0]); //con, số ký tự số, 2 con, 3 con, sử dụng để lấy cấu hình và lưu thống kê
+                    // if(count($danh_sach_tang_diem) > 0){
+                        
+                    //     $result_dt = kiem_tra_tang_diem::lay_so_diem_tang($danh_sach_tang_diem, $chi_tiet_tin->kieu, $chi_tiet_tin->dai, $so_arr );
+                    //     $result_diem_tang .= $result_dt['msg_diem_tang'] . "\n";
+                    //     if($result_dt['diem_tang'] > 0){
+                    //         $co = $result_dt['diem_tang'];
+                    //     }
+                    // }
 
-                $chi_tiet_tin->xac = 7 * $chi_tiet_tin->diem * $so_luong_so; //Xác = số_lô * điểm * số lượng số. số lô miền nam là 18,17,16, mb 27 23 20 
-                $chi_tiet_cau_hinh = ($con == 2)? $cau_hinh->lay_chi_tiet_7lo_2con() : $cau_hinh->lay_chi_tiet_7lo_3con(); //Lấy chi tiết cấu hình theo số con
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung; //trúng
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-                //Kiểm tra trúng trật
-                if ($da_co_ket_qua)
-                    $chi_tiet_tin = ($con == 2)? $ket_qua_dai->BayLo2con($chi_tiet_tin, $trung) : $ket_qua_dai->BayLo3con($chi_tiet_tin, $trung);
-                //Cập nhật trúng trật
-                if ($con == 2) {
-                    $thong_ke['2c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['2c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
+                    // $chi_tiet_tin->xac = $chi_tiet_tin->diem * 72 * $so_luong_so; //Xác của tin
+                    // $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
+                    // $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
+
+                    if ($da_co_ket_qua) //Cập nhật kết quả
+                        $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung, $so_arr);
+
+                    $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
+                    $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;
                     if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['2c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['2c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                        $thong_ke['2c-baylo']->diem_trung += $chi_tiet_tin->diem;
+                        $thong_ke['dax']->tien_trung += $chi_tiet_tin->tien_trung;
+                        $thong_ke['dax']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
+                        $thong_ke['dax']->diem_trung += $chi_tiet_tin->diem;
                     }
+                    $html_chi_tiet .= $chi_tiet_tin->toHTML();
                 }
-                if ($con == 3) {
-                    $thong_ke['3c-baylo']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                    $thong_ke['3c-baylo']->thuc_thu += $chi_tiet_tin->thuc_thu;
 
-                    if ($chi_tiet_tin->tien_trung > 0) {
-                        $thong_ke['3c-baylo']->tien_trung += $chi_tiet_tin->tien_trung;
-                        $thong_ke['3c-baylo']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                        $thong_ke['3c-baylo']->diem_trung += $chi_tiet_tin->diem;
-                    }
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
+            }            
 
-            //------------------ da -------------------------------
-            if ($chi_tiet_tin->kieu === "da") {
-                //Cập nhật xác, tiền, thực thu
-
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da($vung_mien); //Lấy cấu hình, cò, trúng
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung;
-
-                
-                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 54 * $so_luong_so; //Xác của tin
-
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-
-                if ($da_co_ket_qua) //Cập nhật kết quả
-                    $chi_tiet_tin = $ket_qua_dai->Da($chi_tiet_tin, $trung);
-
-                $thong_ke['dat']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['dat']->thuc_thu += $chi_tiet_tin->thuc_thu;
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['dat']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['dat']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                    $thong_ke['dat']->diem_trung += $chi_tiet_tin->diem;
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
-            //------------------ da xiên -------------------------------
-            if ($chi_tiet_tin->kieu === "dx") {
-                //Cập nhật xác, tiền, thực thu
-
-                $chi_tiet_cau_hinh = $cau_hinh->lay_chi_tiet_da_xien(); //Lấy cấu hình, cò, trúng
-                $co = $chi_tiet_cau_hinh->co; //cò
-                $trung = $chi_tiet_cau_hinh->trung;
-
-                $chi_tiet_tin->xac = $chi_tiet_tin->diem * 72 * $so_luong_so; //Xác của tin
-                $chi_tiet_tin->tien = $chi_tiet_tin->xac * $co * 10; //Tiền
-                $chi_tiet_tin->thuc_thu = $chi_tiet_tin->xac * ($co / 100); //Thực thu
-
-                if ($da_co_ket_qua) //Cập nhật kết quả
-                    $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung);
-
-                $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
-                $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;
-                if ($chi_tiet_tin->tien_trung > 0) {
-                    $thong_ke['dax']->tien_trung += $chi_tiet_tin->tien_trung;
-                    $thong_ke['dax']->so_trung .= $chi_tiet_tin->so_trung . '</br>';
-                    $thong_ke['dax']->diem_trung += $chi_tiet_tin->diem;
-                }
-                $html_chi_tiet .= $chi_tiet_tin->toHTML();
-            }
         }
 
         $html_thong_ke = tin_thongke::toHTMLFormArray($thong_ke);

@@ -211,9 +211,9 @@ class ket_qua_ngay
         return new ket_qua_dai();
     }
 
-    function DaXien(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function DaXien(chi_tiet_tin $chi_tiet, float $trung, $so_arr ): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so); //Tách dãy các số thành mảng
+        $cac_so = $so_arr; //Tách dãy các số thành mảng
 
         $mang_cac_dai = explode(',', $chi_tiet->dai);
 
@@ -251,11 +251,12 @@ class ket_qua_dai
         $cac_giai = array();
     }
 
-    function HaiConDau(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function HaiConDau(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $giai_can_lay =  8 ;
-        $cac_so = explode(' ', $chi_tiet->so);
+        $giai_can_lay =  8;
+        $cac_so = $so_arr;
         $size_of_cac_so = sizeof($cac_so);
+
         foreach ($cac_so as $so) {
            
             // kiểm tra xem nếu là 4 kí tự thì lấy 2 số cuối của số
@@ -266,14 +267,14 @@ class ket_qua_dai
             if(isset($this->cac_giai[$giai_can_lay])){
                 $giai = $this->cac_giai[$giai_can_lay];
                 // var_dump($this->cac_giai[$giai_can_lay]);
-            // var_dump($so);
-            // var_dump(strpos($giai, $so));
+                // var_dump($so);
+                // var_dump(strpos($giai, $so));
 
-            if (strpos($giai, $so) !== false) {
-                $chi_tiet->tien_trung += ($chi_tiet->xac / $size_of_cac_so) * $trung;
-                $chi_tiet->so_trung .=$so . "</br>";
-                
-            }
+                if (strpos($giai, $so) !== false) {
+                    $chi_tiet->tien_trung += ($chi_tiet->xac / $size_of_cac_so) * $trung;
+                    $chi_tiet->so_trung .=$so . "</br>";
+                    
+                }
             }
 
             
@@ -283,9 +284,9 @@ class ket_qua_dai
     }
 
     //Hàm so sánh 2 con đuôi, 2 số cuối giải ĐB
-    function HaiConDuoi(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function HaiConDuoi(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so);
+        $cac_so = $so_arr;
         $size_of_cac_so = sizeof($cac_so);
 
         if(isset($this->cac_giai[0])){
@@ -310,15 +311,20 @@ class ket_qua_dai
     }
 
     //So sánh 2 con bao, tất cả giải
-    function Bao(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function Bao(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so);
+        $cac_so = $so_arr;
         $con = strlen($cac_so[0]);
         $giai_bat_dau_soi = (sizeof($this->cac_giai) + 1) - $con; //Lấy vị trí giải bắt đầu soi trở về 0
+
         foreach ($cac_so as $so) {
+
             for ($i = $giai_bat_dau_soi; $i >= 0; $i--) { //Soi từng giải
+
                 $giai = $this->cac_giai[$i];
+
                 $mang_cac_so_cua_giai = explode(';', $giai); //Phân tách các số của giải
+                
                 foreach ($mang_cac_so_cua_giai as $so_cua_giai) { //Với mỗi số của giải, lấy só cuối, có thể là 2, 3, 4 số cuối
                     $so_cuoi = substr($so_cua_giai, (-1 * $con));
                     if ($so == $so_cuoi) { //So sánh số cuối, nếu bằng thì cập nhật 
@@ -332,9 +338,9 @@ class ket_qua_dai
         return $chi_tiet;
     }
     //So sánh 2 con bao, tất cả giải
-    function BayLo2con(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function BayLo2con(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so);
+        $cac_so = $so_arr;
         foreach ($cac_so as $so) {
             for ($i = 8; $i >= 5; $i--) { //Soi từ giải 8 đến giải 5
                 
@@ -369,9 +375,9 @@ class ket_qua_dai
         return $chi_tiet;
     }
 
-    function BayLo3con(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function BayLo3con(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so);
+        $cac_so = $so_arr;
 
         foreach ($cac_so as $so) {
             for ($i = 7; $i >= 5; $i--) { //Soi từ giải 7 đến giải 5
@@ -419,21 +425,23 @@ class ket_qua_dai
         return $chi_tiet;
     }
     //Hàm soi đánh 3 con đầu. Miền Nam giải 7, miền bắc Giải 6
-    function XiuDau(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function XiuDau(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $vi_tri_giai_can_lay =  7; //Nam lấy 7, bắc lấy 6
+        $vi_tri_giai_can_lay = 7; //Nam lấy 7, bắc lấy 6
 
-        if(isset($this->cac_giai[$vi_tri_giai_can_lay])){
+        if (isset($this->cac_giai[$vi_tri_giai_can_lay])){
+
             $giai_can_lay = $this->cac_giai[$vi_tri_giai_can_lay];
+
             $mang_cac_so_cua_giai = explode(';', $giai_can_lay); //Tách các số của giải thành mảng
 
-            $cac_so = explode(' ', $chi_tiet->so); //Tách dãy các cần soi  thành mảng
+            $cac_so = $so_arr; //Tách dãy các cần soi  thành mảng
             //$size_of_cac_so = sizeof($cac_so); //Số lượng số cần soi
-
+            
             foreach ($cac_so as $so) {
 
                 // kiểm tra xem nếu là 4 kí tự thì lấy 3 số cuối của số
-                if(strlen($so) == 4){
+                if(strlen($so) >=3){
                     $so = substr($so, -3);
                 }
 
@@ -443,48 +451,41 @@ class ket_qua_dai
 
                         //$xac_cua_so = $chi_tiet->xac / $size_of_cac_so;
                         $chi_tiet->tien_trung += $chi_tiet->diem * $trung;
-                        $chi_tiet->so_trung .= $so . '</br>';
+                        $chi_tiet->so_trung .=$so . "</br>";
                     }
                 }
             }
-            
         }
 
         return $chi_tiet;
-
-        
     }
 
     //Hàm soi đánh 3 con đuôi, 3 số cuối giải ĐB
-    function XiuDuoi(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function XiuDuoi(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
 
-        if(isset($this->cac_giai[0])){
 
-            $cac_so = explode(' ', $chi_tiet->so); //Tách dãy các cần soi  thành mảng
-            $size_of_cac_so = sizeof($cac_so); //Số lượng số cần soi
+        $cac_so = $so_arr; //Tách dãy các cần soi  thành mảng
+        $size_of_cac_so = sizeof($cac_so); //Số lượng số cần soi
 
-            $giai_db = $this->cac_giai[0];
-            $ba_so_cuoi = substr($giai_db, -3);
+        $giai_db = $this->cac_giai[0];
+        $ba_so_cuoi = substr($giai_db, -3);
 
-            foreach ($cac_so as $so) {
+        foreach ($cac_so as $so) {
 
-                // kiểm tra xem nếu là 4 kí tự thì lấy 3 số cuối của số
-                if(strlen($so) == 4){
-                    $so = substr($so, -3);
-                }
+            // kiểm tra xem nếu là 4 kí tự thì lấy 3 số cuối của số
+            if(strlen($so) >=3){
+                $so = substr($so, -3);
+            }
 
-                if ($so === $ba_so_cuoi) { //So sánh ba số cuối, nếu bằng thì cập nhật 
+            if ($so === $ba_so_cuoi) { //So sánh ba số cuối, nếu bằng thì cập nhật 
 
-                    //$xac_cua_so = $chi_tiet->xac / $size_of_cac_so;
-                    $chi_tiet->tien_trung += $chi_tiet->diem * $trung;
-                    $chi_tiet->so_trung .= $so . '</br>';
-                }
-
+                //$xac_cua_so = $chi_tiet->xac / $size_of_cac_so;
+                $chi_tiet->tien_trung += $chi_tiet->diem * $trung;
+                $chi_tiet->so_trung .= $so . '</br>';
             }
 
         }
-        
         return $chi_tiet;
     }
 
@@ -493,9 +494,9 @@ class ket_qua_dai
     /**
      * Hàm soi kiểu Đá Thẳng
      */
-    function Da(chi_tiet_tin $chi_tiet, float $trung): chi_tiet_tin
+    function Da(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
     {
-        $cac_so = explode(' ', $chi_tiet->so); //Tách dãy các số thành mảng
+        $cac_so = $so_arr; //Tách dãy các số thành mảng
         foreach ($cac_so as $so) { //Với mỗi số
             $so1 = substr($so, 0, 2);
             $so2 = substr($so, -2);

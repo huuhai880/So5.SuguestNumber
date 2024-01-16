@@ -29,37 +29,38 @@ class kiem_tra_tang_diem
     }
 
 
-    public static function lay_so_diem_tang($danh_sach_chan_diem, $kieu_danh, $dai, $so_arr) {
+    public static function lay_so_diem_tang($danh_sach_chan_diem, $kieu_danh, $dai, $numbersToCheck) {
         
-        $diem_tang = '';
-
-       
-        for($index = 0; $index < count($danh_sach_chan_diem); $index ++ ){
-
+        $msg_diem_tang = '';
+        $diem_tang = 0;
+        $result = [];
+    
+        for ($index = 0; $index < count($danh_sach_chan_diem); $index++) {
+    
             $item_diem = $danh_sach_chan_diem[$index];
-
-            #kiểm tra xem có đài tăng điểm không
-            if($item_diem['dai_limit'] == $dai){
-
-                #kiểm tra xem nếu đã trùng đài thì kiểm tra tiếp xem có trùng kiểu đánh hay không
-                if($item_diem['kieu_so'] == $kieu_danh){
-
-                    foreach ($so_arr as $so) {
-
-                        #kiểm tra tiếp số đó có phải là số được tăng điểm tính hay không
-                        if($item_diem['number_limit'] == $so){
-                            $diem_tang .= '- Số '. $so ." đài ".$dai ." kiểu ". $kieu_danh .  " điểm trúng được tăng lên ". $item_diem['diem_chan']."\n";
+    
+            // Check if the betting limit matches
+            if ($item_diem['dai_limit'] == $dai) {
+    
+                // Check if the betting type matches
+                if ($item_diem['kieu_so'] == $kieu_danh) {
+    
+                    foreach ($numbersToCheck as $so) {
+    
+                        // Check if the number matches the specified condition
+                        if ($item_diem['number_limit'] == $so) {
+                            $diem_tang = $item_diem['diem_chan'];
+                            $msg_diem_tang .= '- Số ' . $so . " đài " . $dai . " kiểu " . $kieu_danh . " điểm trúng được tăng lên " . $item_diem['diem_chan'] . "\n";
                         }
-
                     }
-                    
-
                 }
             }
         }
-
-       return $diem_tang;
-       
+    
+        $result['msg_diem_tang'] = $msg_diem_tang;
+        $result['diem_tang'] = $diem_tang;
+    
+        return $result;
     }
 
 }
