@@ -721,7 +721,7 @@ class NoiDungTin
 
         
         $dsKieu = new DanhSachKieu();
-        $html_tin = "<b>";
+        $html_tin = "";
         $tu_ko_hop_le = '';
         //Duyệt các từ
         for ($i = 0; $i < count($this->noi_dung_arr); $i++) {
@@ -733,7 +733,7 @@ class NoiDungTin
                 if ($start == -1) //Kiem tra kieu khong co so
                 {
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                 } else {
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                 }
@@ -790,9 +790,9 @@ class NoiDungTin
                 }
             }
         }
-        $html_tin .= '</b>';
+        $html_tin .= '';
         if (strlen($tu_ko_hop_le) > 0) {
-            $tu_ko_hop_le = "<b>Lỗi cú pháp, không nhận diện được số đánh cảu kiểu : " . $tu_ko_hop_le . "</b>";
+            $tu_ko_hop_le = "<pre>Lỗi cú pháp, không nhận diện được số đánh cảu kiểu : " . $tu_ko_hop_le . "</pre>";
             return $html_tin . $tu_ko_hop_le;
         }
         return '';
@@ -801,7 +801,7 @@ class NoiDungTin
     public function KiemTraTuHopLe(): string
     {
         $size = count($this->noi_dung_arr);
-        $html_tin = "<b>";
+        $html_tin = "";
         $tu_ko_hop_le = '';
         $ds_dai = new DanhSachDai();
         $ds_kieu = new DanhSachKieu();
@@ -812,7 +812,7 @@ class NoiDungTin
                     ||  preg_match('/dc|dp|chinh|chanh|phu/', $item)) {
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                 } else {
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
             } else { //Nếu có chứa số
@@ -822,14 +822,14 @@ class NoiDungTin
                 if ($la_dai || $la_keo || $la_so)
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                 else {
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
             }
         }
-        $html_tin .= '</b>';
+        $html_tin .= '';
         if (strlen($tu_ko_hop_le) > 0) {
-            $tu_ko_hop_le = "<b>Lỗi, các từ : " . $tu_ko_hop_le . " không nhận diện được</b>";
+            $tu_ko_hop_le = "<pre>Lỗi, các từ : " . $tu_ko_hop_le . " không nhận diện được</pre>";
             return $html_tin . $tu_ko_hop_le;
         }
         return '';
@@ -853,7 +853,7 @@ class NoiDungTin
 
         $size = count($this->noi_dung_arr);
         $ds_dai = new DanhSachDai();
-        $html_tin = "<b>";
+        $html_tin = "";
         $tu_ko_hop_le = '';
         for ($i = 0; $i < $size; $i++) {
             if ($this->laDai($i)) {
@@ -876,13 +876,13 @@ class NoiDungTin
                     $html_tin .= $this->noi_dung_arr[$i] . ' ';
                     //if(preg_match('/4d|4dai/', $this->noi_dung_arr[$i]) && $day_of_week != 7)
                 } else {
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</b>';
+        $html_tin .= '';
         if (strlen($tu_ko_hop_le) > 0) {
             $thu = ($this->day_of_week == 0) ? 'Chủ nhật' : 'Thứ ' . ($this->day_of_week + 1);
             $tu_ko_hop_le = "<pre>" . $thu . " không nhận đài : " . $tu_ko_hop_le . "</pre>";
@@ -893,19 +893,19 @@ class NoiDungTin
     public function KiemTra4d4dai(): string
     {
         $size = count($this->noi_dung_arr);
-        $html_tin = "<b>";
+        $html_tin = "";
         $tu_ko_hop_le = '';
         for ($i = 0; $i < $size; $i++) { 
             if ($this->laDai($i)) {
                 if (preg_match('/4d|4dai/', $this->noi_dung_arr[$i]) && $this->day_of_week != 6) {
                     //4 dai ma ko phai thu 7 thi ko hop le
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 } else {
                     $so_dai = substr_count($this->noi_dung_arr[$i], ',') + 1;
                     if($so_dai == 4  && $this->day_of_week != 6 ){
                         //4 dai ma ko phai thu 7 thi ko hop le
-                        $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                        $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                         $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                     } else  //hop le
                         $html_tin .= $this->noi_dung_arr[$i] . ' ';
@@ -913,7 +913,7 @@ class NoiDungTin
             } else
                 $html_tin .= $this->noi_dung_arr[$i] . ' ';
         }
-        $html_tin .= '</b>';
+        $html_tin .= '';
         if (strlen($tu_ko_hop_le) > 0) {
             $tu_ko_hop_le = "<pre>" . $tu_ko_hop_le . "chỉ nhận vào thứ 7 </pre>";
             $ket_qua = $html_tin . $tu_ko_hop_le;
@@ -951,7 +951,7 @@ class NoiDungTin
         
 
         $size = count($this->noi_dung_arr);
-        $html_tin = "<span class='tg-spoiler'>";
+        $html_tin = "";
         $tu_ko_hop_le = '';
         $vuot_han_muc = '';
         $ket_qua = '';
@@ -962,7 +962,7 @@ class NoiDungTin
                     # kiểm tra nếu là điểm thì check xem có vượt hạn mức không
                    
                     if ($lst_number_limit > 0 && $this->noi_dung_arr[$i+1] >= $lst_number_limit) {
-                        $html_tin .= '<code>' . $this->noi_dung_arr[$i] . '</code>';
+                        $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                         $vuot_han_muc .= $lst_number_limit . ', ';
                     } else {
                         $html_tin .= $this->noi_dung_arr[$i] . ' ';
@@ -970,7 +970,7 @@ class NoiDungTin
 
                 } else {
                     //4 dai ma ko phai thu 7 thi ko hop le
-                    $html_tin .= ' <code> ' . $this->noi_dung_arr[$i] . ' </code> ';
+                    $html_tin .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>';
                     $tu_ko_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
             } else
@@ -979,7 +979,7 @@ class NoiDungTin
 
        
 
-        $html_tin .= '</span>';
+        $html_tin .= '';
         if (strlen($tu_ko_hop_le) > 0) {
             $tu_ko_hop_le = "<pre> Lỗi cú pháp: Không nhận diện được điểm đánh của kiểu " . $tu_ko_hop_le . " có thể điểm đánh không đúng </pre>";
             $vuot_han_muc = "<pre> Lỗi cú pháp: Điểm đã vượt quá hạn mức " . $vuot_han_muc . "</pre>";
@@ -1212,7 +1212,7 @@ class NoiDungTin
             if ($i == $start && $cung_so_chu_so == false) { // Bắt đầu tô sáng dãy số
                 $html_output .= "<b><i><s>" . $item . ' '; // Thì tô sáng 
             } else if ($i == $end && $cung_so_chu_so == false) { // Kết thúc tô sáng
-                $html_output .= $item . "</b></i></s>";
+                $html_output .= $item . "</s></i></b>";
             } else
                 $html_output .= $item . " "; // Thêm bình thường
 
@@ -1260,7 +1260,7 @@ class NoiDungTin
             if ($i == $start && $trung_nhau == true) { // Bắt đầu tô sáng dãy số
                 $html_output .= "<b><i><s>" . $item . ' '; // Thì tô sáng 
             } else if ($i == $end && $trung_nhau == true) { // Kết thúc tô sáng
-                $html_output .= $item . "</b></i></s>";
+                $html_output .= $item . "</s></i></b>";
             } else
                 $html_output .= $item . " "; // Thêm bình thường
 
@@ -1286,7 +1286,7 @@ class NoiDungTin
                 if (1 < $count_of_digit && $count_of_digit < 5) //Neu co 2 - 4 so
                     $html_output .= $this->noi_dung_arr[$i] . ' '; //Thêm bình thường
                 else {
-                    $html_output .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</b></i></s>'; //thì tô sáng
+                    $html_output .= '<b><i><s>' . $this->noi_dung_arr[$i] . '</s></i></b>'; //thì tô sáng
                     $tu_khong_hop_le .= $this->noi_dung_arr[$i] . ', ';
                 }
             } else

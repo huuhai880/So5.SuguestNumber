@@ -883,7 +883,6 @@ class tin
 
             $tin->CapNhatTinVaChiTiet($tin, $ds_chi_tiet, 'mt');
             
-
         }
         
         return $result;
