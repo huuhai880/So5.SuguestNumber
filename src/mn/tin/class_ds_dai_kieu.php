@@ -21,7 +21,7 @@ class DanhSachDai
         $this->dais[] = new Ten('Cà Mau', 'cm', array("ca mau", "ca. mau", "camau", "ca.mau", "cm", "cmau", "c mau", "c.mau", "dai ca mau"));
         $this->dais[] = new Ten('Bến Tre', 'bt', array("ben tre", "bentre", "bt", "btr", "btre", "b tre", "b.tre", "dai ben tre"));
         $this->dais[] = new Ten('Vũng Tàu', 'vt', array("vung tau", "vung. tau", "dung tau", "vungtau", "dungtau", "vug tau", "vt", "vtau", "v tau", "v.tau", "dai vung tau"));
-        $this->dais[] = new Ten('Bạc Liêu', 'blieu', array("bac lieu", "bac. lieu", "baclieu", "bac.lieu", "bli", "blie", "bliu", "bl", "b lieu", "blieu", "b.lieu", "dai bac lieu"));
+        $this->dais[] = new Ten('Bạc Liêu', 'blieu', array("bac lieu", "bac. lieu", "baclieu", "bac.lieu", "bli", "blie", "bliu",  "b lieu", "blieu", "b.lieu", "dai bac lieu"));
         $this->dais[] = new Ten('Đồng Nai', 'dn', array("dong nai", "dong.nai", "dongnai", "dog nai", "dognai", "dn", "dnai", "d.nai", "dai dong nai"));
         $this->dais[] = new Ten('Cần Thơ', 'ct', array("can tho", "cantho", "ct", "cth", "dai can tho", "ctho", "c.tho"));
         $this->dais[] = new Ten('Sóc Trăng', 'st', array("soc trang", "soctrang", "soc.trang", "soc. trang", "st", "str", "dai soc trang", "strang", "s.trang", "s trang"));
