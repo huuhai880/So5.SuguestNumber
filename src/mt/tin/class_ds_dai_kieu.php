@@ -123,34 +123,18 @@ class DanhSachKieu
     {
         $this->kieus = array();
         $this->kieus[] = new Ten('Đầu', 'dau', array('dau', 'a'));
-        $this->kieus[] = new Ten('Đuôi', 'duoi', array('duoi', 'dui', 'd'));
-        $this->kieus[] = new Ten('Đầu đuôi', 'dauduoi', array('dd', 'dauduoi', 'daudui', 'ab'));
-        $this->kieus[] = new Ten('Bao lô', 'blo', array('b', 'bao', 'bl', 'blo', 'lo', 'doc'));
+        $this->kieus[] = new Ten('Đuôi', 'duoi', array("dui", "duoi", "dbiet", "dac", "ddac", "docdac"));
+        $this->kieus[] = new Ten('Đầu đuôi', 'dauduoi', array("dduoi", "daud", "ddui", "dduj", "dd", "dauduoi", "duoidau", "daudui",'d'));
+        $this->kieus[] = new Ten('Bao lô', 'blo', array("baolo", "bao", "lo", "bl", "blo", "b","Lo"));
         $this->kieus[] = new Ten('Bao lô đảo', 'blodao', array('baodao', 'daolo', 'dlo', 'bld', 'bdao', 'dbao', 'db', 'bd', 'blodao', 'dbl', 'bldao'));
         $this->kieus[] = new Ten('Bảy lô', 'baylo', array('slo', 'baylo'));
-        $this->kieus[] = new Ten('Xỉu chủ', 'xc', array('xc', 'x', 'tl', 'tlo', 'sc', 'siu'));
+        $this->kieus[] = new Ten('Xỉu chủ', 'xc', array("x", "xiu", "xc", "xchu", "xiuch", "xch", "xiuchu", "schu", "sc", "tieuchu", "tieulo", "tlo", "tl"));
         $this->kieus[] = new Ten('Xỉu chủ đầu', 'xdau', array('xdau', 'xcdau', 'tldau', 'tlodau'));
         $this->kieus[] = new Ten('Xỉu chủ đuôi', 'xduoi', array('xduoi', 'xcdui', 'xcduoi', 'xdui', 'tldui', 'tlduoi', 'tlodui', 'tloduoi'));
-        $this->kieus[] = new Ten('Xỉu chủ đảo', 'xdao', array('xd', 'xcd', 'dxc', 'daox', 'daoxc', 'xdao', 'xcdao', 'tld', 'dtl', 'daotl', 'tldao', 'tlod', 'dtlo', 'daotlo', 'tlodao', 'suidao'));
+        $this->kieus[] = new Ten('Xỉu chủ đảo', 'xdao', array("dxiu", "daocx", "daox", "xdao", "cdao", "xcd", "xdc", "scdao", "scd", "daoxiu", "daoxchu", "xiuchudao", "daoxiuchu", "xcdao", "daoxc", "dxc", "xd", "tieulodao", "tieulod", "tldao", "tld", "td", "daotl", "daotieulo", "dtl"));
         $this->kieus[] = new Ten('Xỉu chủ đảo đầu', 'xddau', array('xdaudao', 'xddau', 'daoxdau', 'xcdaudao', 'daoxcdau', 'tldaudao', 'daotldau', 'tlduidao', 'tlodaudao', 'daotlodau'));
         $this->kieus[] = new Ten('Xỉu chủ đảo đuôi', 'xdduoi', array(
-            'xduoidao',
-            'xduidao',
-            'xddui',
-            'xdduoi',
-            'daoxdui',
-            'daoxduoi',
-            'xcduidao',
-            'xcduoidao',
-            'daoxcdui',
-            'daoxcduoi',
-            'tlduoidao',
-            'daotldui',
-            'daotlduoi',
-            'tloduidao',
-            'tloduoidao',
-            'daotlodui',
-            'daotloduoi'
+            "daoxduoi", "daoxiuduoi", "daoxcduoi", "daoxchuduoi", "daoxiuchuduoi", "daoxdui", "daoxiudui", "daoxcdui", "daoxchudui", "daoxiuchdui", "daoxchdui", "daoxiuchudui", "dxcduoi", "dxcdui", "xduidao", "xcduoidao", "xcduidao", "xcdaodui", "xcdaoduoi", "xdaoduoi", "xdaodui", "xduoidao", "tlduoidao", "tlduidao"
         )
         );
         $this->kieus[] = new Ten('Đá', 'da', array('da','_da'));

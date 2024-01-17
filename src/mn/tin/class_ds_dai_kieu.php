@@ -135,7 +135,7 @@ class DanhSachKieu
         $this->kieus = array();
         $this->kieus[] = new Ten('Đầu', 'dau', array('dau', 'a'));
         $this->kieus[] = new Ten('Đuôi', 'duoi', array("dui", "duoi", "dbiet", "dac", "ddac", "docdac"));
-        $this->kieus[] = new Ten('Đầu đuôi', 'dauduoi', array("dduoi", "daud", "ddui", "dduj", "dd", "dauduoi", "duoidau", "daudui"));
+        $this->kieus[] = new Ten('Đầu đuôi', 'dauduoi', array("dduoi", "daud", "ddui", "dduj", "dd", "dauduoi", "duoidau", "daudui",'d'));
         $this->kieus[] = new Ten('Bao lô', 'blo', array("baolo", "bao", "lo", "bl", "blo", "b","Lo"));
         $this->kieus[] = new Ten('Bao lô đảo', 'blodao', array('baodao', 'daolo', 'dlo', 'bld', 'bdao', 'dbao', 'db', 'bd', 'blodao', 'dbl', 'bldao'));
         $this->kieus[] = new Ten('Bảy lô', 'baylo', array('slo', 'baylo'));
