@@ -830,7 +830,7 @@ class tin
                     $trung = $chi_tiet_cau_hinh->trung;
 
                     if ($da_co_ket_qua) //Cập nhật kết quả
-                        $chi_tiet_tin = $ket_qua_mien_bac->DaXien($chi_tiet_tin, $trung, $so_arr);
+                        $chi_tiet_tin = $ket_qua_mien_nam->DaXien($chi_tiet_tin, $trung, $so_arr);
 
                     $thong_ke['dax']->xac += $chi_tiet_tin->xac; //Cập nhật thống kê xác
                     $thong_ke['dax']->thuc_thu += $chi_tiet_tin->thuc_thu;

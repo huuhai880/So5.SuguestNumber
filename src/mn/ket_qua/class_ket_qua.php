@@ -464,25 +464,27 @@ class ket_qua_dai
 
         $cac_so = $so_arr; //Tách dãy các cần soi  thành mảng
         $size_of_cac_so = sizeof($cac_so); //Số lượng số cần soi
+        if(isset($this->cac_giai[0])){
+            $giai_db = $this->cac_giai[0];
+            $ba_so_cuoi = substr($giai_db, -3);
 
-        $giai_db = $this->cac_giai[0];
-        $ba_so_cuoi = substr($giai_db, -3);
+            foreach ($cac_so as $so) {
 
-        foreach ($cac_so as $so) {
+                // kiểm tra xem nếu là 4 kí tự thì lấy 3 số cuối của số
+                if(strlen($so) >=3){
+                    $so = substr($so, -3);
+                }
 
-            // kiểm tra xem nếu là 4 kí tự thì lấy 3 số cuối của số
-            if(strlen($so) >=3){
-                $so = substr($so, -3);
+                if ($so === $ba_so_cuoi) { //So sánh ba số cuối, nếu bằng thì cập nhật 
+
+                    //$xac_cua_so = $chi_tiet->xac / $size_of_cac_so;
+                    $chi_tiet->tien_trung += $chi_tiet->diem * $trung;
+                    $chi_tiet->so_trung .= $so . '</br>';
+                }
+
             }
-
-            if ($so === $ba_so_cuoi) { //So sánh ba số cuối, nếu bằng thì cập nhật 
-
-                //$xac_cua_so = $chi_tiet->xac / $size_of_cac_so;
-                $chi_tiet->tien_trung += $chi_tiet->diem * $trung;
-                $chi_tiet->so_trung .= $so . '</br>';
-            }
-
         }
+        
         return $chi_tiet;
     }
 
