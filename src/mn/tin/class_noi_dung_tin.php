@@ -188,7 +188,7 @@ class NoiDungTin
 
                 $chi_tiet_boc_tach = new ChiTietBocTach();
                 //Kiểu, chuẩn hoá về viết tắt
-                $kieu_viet_tat = $ds_kieu->LayVietTatTheoCode($this->noi_dung_arr[$i]);
+                $kieu_viet_tat = $ds_kieu->LayVietTatTheoCode($this->noi_dung_arr[$i], $this->day_of_week);
                 $chi_tiet_boc_tach->kieu = $kieu_viet_tat;
                 //Đài, chuẩn hoá về viết tắt
                 $vi_tri_dai_cua_kieu = $this->LayViTriDaiCuaKieu($i); //Đài
@@ -755,7 +755,7 @@ class NoiDungTin
                 }
                 
 
-                $vietTatKieu = $dsKieu->LayVietTatTheoCode($item);
+                $vietTatKieu = $dsKieu->LayVietTatTheoCode($item, $this->day_of_week);
                 $ket_qua = '';
                 switch ($vietTatKieu) { //Goi ham kiem tra so theo kieu
                     case "dau":
