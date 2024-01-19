@@ -323,25 +323,33 @@ class NoiDungTin
                 
                 $so_before = $this->noi_dung_arr[$i];
 
-                if($kieu_after > 0 ){
+               
+                if($kieu_after > 0 && $kieu !='xdao' ){
+
 
                     $so_before = substr($this->noi_dung_arr[$i], $kieu_after);
-                    
+ 
                     #kiểm tra nếu độ dài số lớn trừ đi số kiểu phía trước nhỏ hơn 2 thì lấy hai số cuối của số
-                    if((strlen($this->noi_dung_arr[$i]) - $kieu_after) <= 2 ){
+                    
+                    if((strlen($this->noi_dung_arr[$i]) - $kieu_after) <= 2){
+                       
                         $so_before = substr($this->noi_dung_arr[$i], -2);
+                       
                     }
                 }
                 
-                if($kieu =='xc' && strlen($so_before) >=3){
+                
+                if($kieu =='xc' && strlen($so_before) >=3 ){
 
                     $result[] = substr($so_before, -3);
-                    
+
+                
                 }elseif(($kieu =='dau' || $kieu =='duoi' || $kieu =='dauduoi') && strlen($so_before) >=2){
 
                     $result[] = substr($so_before, -2);
                     
                 }else{
+
                     $result[] = $so_before;
                 }
                 

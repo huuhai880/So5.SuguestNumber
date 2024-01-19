@@ -315,7 +315,7 @@ class NoiDungTin
                 
                 $so_before = $this->noi_dung_arr[$i];
 
-                if($kieu_after > 0 ){
+                if($kieu_after > 0 && $kieu !='xdao'){
 
                     $so_before = substr($this->noi_dung_arr[$i], $kieu_after);
                     
