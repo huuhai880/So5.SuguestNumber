@@ -165,7 +165,7 @@ class DanhSachKieu
         return false;
     }
 
-    public function LayVietTatTheoCode(string $code) : string
+    public function LayVietTatTheoCode(string $code, int $day_of_week ) : string
     {
         if($code === 'bd' && $day_of_week == 5) //Neu la bd va thu 6 thi ko phai code
             return '';
