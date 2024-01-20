@@ -545,52 +545,60 @@ class tin
         return $sql_connector->get_query_result($sql);
     }
 
-    public static function LayChiTietThongKeTin(string $ten_tai_khoan, $ngay)
+    public static function LayChiTietThongKeTin(string $ten_tai_khoan, $ngay, $tin_list)
     {   
 
         $result = [];
 
-        $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
-                        AND vung_mien='mt' AND thoi_gian_danh = '$ngay' AND trang_thai != -1 ";     
-
-
-       
-
-        $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
-
-       
         if (sizeof($tin_list) == 0) {
             //echo 'Không có tin cần soi!';
-            return  $result;
+            return $result ;
+        }
+
+        $uniqueIds = array_unique(array_column($tin_list, 'id'));
+        $joinedIds = implode(',', $uniqueIds);
+        
+        $ds_chi_tiet = chi_tiet_tin::lay_chi_tiet_cua_tin($joinedIds);
+
+        $grouped_data = [];
+
+        foreach ($ds_chi_tiet as $chi_tiet) {
+            $id_tin = $chi_tiet->id_tin;
+
+            if (!isset($grouped_data[$id_tin])) {
+                $grouped_data[$id_tin] = [];
+            }
+
+            $grouped_data[$id_tin][] = $chi_tiet;
         }
 
         foreach ($tin_list as $tin) {
-            $ds_chi_tiet = chi_tiet_tin::lay_chi_tiet_cua_tin($tin->id);
 
-            $result_thong_ke = tin::CapNhatKetQuaTin($tin, $ds_chi_tiet, $ngay, "GET");
+            $_chi_tiet_tin = $grouped_data[$tin->id];
+
+            $result_thong_ke = tin::CapNhatKetQuaTin($tin, $_chi_tiet_tin, $ngay, "GET");
 
             if(count($result) == 0){
                 $result = $result_thong_ke['ds_thong_ke'];
 
             }else{
 
-                
                 foreach ($result as $key => $item1) {
-                   
+                    
                     if (isset($result_thong_ke['ds_thong_ke'][$key])) {
-                       
                         
                         $result[$key]->kieu = $item1->kieu; // Assuming kieu remains the same
                         $result[$key]->xac = $item1->xac + $result_thong_ke['ds_thong_ke'][$key]->xac;
                         $result[$key]->diem_trung = $item1->diem_trung + $result_thong_ke['ds_thong_ke'][$key]->diem_trung;
-                       
+                        
                     }
                 }
 
             }
-            
-        }
 
+        }
+        
+            
         return $result;
 
     }
@@ -1053,14 +1061,14 @@ class chi_tiet_tin
         }
         return null;
     }
-    public static function lay_chi_tiet_cua_tin(int $id_tin, sql_connector $sql_connector = null): array
+    public static function lay_chi_tiet_cua_tin($id_tin, sql_connector $sql_connector = null): array
     {
         $ds_chi_tiet = array();
 
         if ($sql_connector === null)
             $sql_connector = new sql_connector();
 
-        $sql = "SELECT * FROM chi_tiet_tin WHERE id_tin = $id_tin";
+        $sql = "SELECT * FROM chi_tiet_tin WHERE id_tin IN ($id_tin)";
         if ($result = $sql_connector->get_query_result($sql)) {
             while ($row = $result->fetch_assoc()) {
                 $chi_tiet = new chi_tiet_tin();

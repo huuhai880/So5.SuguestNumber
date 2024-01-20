@@ -1331,8 +1331,13 @@ class NoiDungTin
     static function LaySoCuaSoKeo(string $so, &$so_ben_trai = null, &$so_ben_phai = null){
         $so = str_replace('keo', 'k','den', $so);
         $sos = explode('k', $so);
-        $so_ben_trai = $sos[0];
-        $so_ben_phai = $sos[1];
+        if(isset($sos[0])){
+            $so_ben_trai = $sos[0];
+        }
+        if(isset($sos[1])){
+            $so_ben_phai = $sos[1];
+        }
+        
     } 
 }
 
