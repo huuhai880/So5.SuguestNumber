@@ -39,12 +39,19 @@ if ($_POST["action"] === "doc") {
         exit();
     }
 
-    //Cập nhật kết quả các tin trước khi đọc
+    //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
+    $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
+                        AND vung_mien='mn' AND thoi_gian_danh = '$ngay'";      
+
+
+    $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
+
+    // //Cập nhật kết quả các tin trước khi đọc
     tin::CapNhatKetQuaCacTin($ten_tai_khoan, $loai_tai_khoan, $ngay);
 
-    //Lấy danh sách thống kế
+    // //Lấy danh sách thống kế
 
-    $result_thong_ke = tin::LayChiTietThongKeTin($ten_tai_khoan, $ngay);
+    $result_thong_ke = tin::LayChiTietThongKeTin($ten_tai_khoan, $ngay,$tin_list );
 
     //Chuẩn bị danh sách các thống kê
     $thong_ke_list = array();
@@ -55,17 +62,12 @@ if ($_POST["action"] === "doc") {
     $thong_ke->ten_hien_thi = $ten_tai_khoan; //Cập nhật
 
 
-    //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
-    $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
-                        AND vung_mien='mn' AND thoi_gian_danh = '$ngay' AND trang_thai != -1 order by thoi_gian_danh ASC ";      
-
-    $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
-
     $thong_ke = CapNhatThongKeTheoDanhSachTin($tin_list, $thong_ke); //Hàm cập nhật thống kê theo danh sách tin
 
     # tạo câu truy vấn lấy chi tiết tin
 
     $ds_chi_tiet = [];
+
 
     foreach ($tin_list as $index_tin => $tin) {
         // Call the 'lay_chi_tiet_cua_tin' method with the 'id' of the current '$tin' element
