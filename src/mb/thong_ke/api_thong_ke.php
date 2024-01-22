@@ -43,30 +43,28 @@ if ($_POST["action"] === "doc") {
         exit();
     }
 
-    //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
-    $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
-                        AND vung_mien='mb' AND thoi_gian_danh = '$ngay'  order by thoi_gian_danh ASC ";      
-
-    $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
-
     //Cập nhật kết quả các tin trước khi đọc
     tin::CapNhatKetQuaCacTin($ten_tai_khoan, $loai_tai_khoan, $ngay);
 
     //Lấy danh sách thống kế
 
-    $result_thong_ke = tin::LayChiTietThongKeTin($ten_tai_khoan, $ngay, $tin_list);
+    $result_thong_ke = tin::LayChiTietThongKeTin($ten_tai_khoan, $ngay);
 
     //Chuẩn bị danh sách các thống kê
     $thong_ke_list = array();
 
     $thong_ke = new thong_ke(); //Tạo thống kê với mỗi tài khoản
 
-   
-
     $thong_ke->ten_tai_khoan = $ten_tai_khoan; //Cập nhật
     $thong_ke->ten_hien_thi = $ten_tai_khoan; //Cập nhật
 
-    
+
+    //Tạo câu sql truy vấn danh sách tin theo iểu truy vấn tương ứng.
+    $sql_lay_tin = "SELECT * FROM tin WHERE tai_khoan_danh = '$ten_tai_khoan'
+                        AND vung_mien='mb' AND thoi_gian_danh = '$ngay' AND trang_thai != -1 order by thoi_gian_danh ASC ";      
+
+    $tin_list = tin::doc_tin_tu_db($sql_lay_tin);
+
     $thong_ke = CapNhatThongKeTheoDanhSachTin($tin_list, $thong_ke); //Hàm cập nhật thống kê theo danh sách tin
 
     # tạo câu truy vấn lấy chi tiết tin
@@ -79,7 +77,7 @@ if ($_POST["action"] === "doc") {
 
         if(count($chi_tiet_tin) > 0){
             // Use the index_tin as the key in $ds_chi_tiet
-            $ds_chi_tiet[$index_tin + 1] = $chi_tiet_tin;
+            $ds_chi_tiet[$index_tin+1] = $chi_tiet_tin;
         }
         
     }

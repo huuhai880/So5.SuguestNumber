@@ -948,15 +948,14 @@ class NoiDungTin
         $kieu_limit = 0;
         $diem_limit = 0;
 
-
-
+        
         if ($limit_number = $sql_connector->get_query_result($sql_lay_limit_number)) {
             while ($row = $limit_number->fetch_assoc()) {
 
                 $lst_number_limit = $row['min_number_limit'];
             }
         }
-        
+
 
         $size = count($this->noi_dung_arr);
         $html_tin = "";
