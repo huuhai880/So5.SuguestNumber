@@ -211,7 +211,7 @@ class ket_qua_ngay
         return new ket_qua_dai();
     }
 
-    function DaXien(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function DaXien(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $cac_so = $so_arr; //Tách dãy các số thành mảng
 
@@ -323,7 +323,7 @@ class ket_qua_dai
     }
 
     //So sánh 2 con bao, tất cả giải
-    function Bao(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function Bao(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $cac_so = $so_arr;
         $con = strlen($cac_so[0]);
@@ -357,7 +357,7 @@ class ket_qua_dai
         return $result;
     }
     //So sánh 2 con bao, tất cả giải
-    function BayLo2con(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function BayLo2con(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $cac_so = $so_arr;
         $tien_trung = 0;
@@ -399,7 +399,7 @@ class ket_qua_dai
         return $result;
     }
 
-    function BayLo3con(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function BayLo3con(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $cac_so = $so_arr;
         $tien_trung = 0;
@@ -453,7 +453,7 @@ class ket_qua_dai
         return $result;
     }
     //Hàm soi đánh 3 con đầu. Miền Nam giải 7, miền bắc Giải 6
-    function XiuDau(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function XiuDau(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $vi_tri_giai_can_lay = 7; //Nam lấy 7, bắc lấy 6
         $tien_trung = 0;
@@ -493,7 +493,7 @@ class ket_qua_dai
     }
 
     //Hàm soi đánh 3 con đuôi, 3 số cuối giải ĐB
-    function XiuDuoi(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function XiuDuoi(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
 
 
@@ -533,7 +533,7 @@ class ket_qua_dai
     /**
      * Hàm soi kiểu Đá Thẳng
      */
-    function Da(chi_tiet_tin $chi_tiet, float $trung, $so_arr): chi_tiet_tin
+    function Da(chi_tiet_tin $chi_tiet, float $trung, $so_arr)
     {
         $cac_so = $so_arr; //Tách dãy các số thành mảng
         $tien_trung = 0;
